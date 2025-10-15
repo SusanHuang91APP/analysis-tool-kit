@@ -8,9 +8,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Cursor editor
-.cursor/
-
 # Node.js dependencies
 node_modules/
 npm-debug.log
