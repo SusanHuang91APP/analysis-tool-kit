@@ -122,7 +122,7 @@ if [[ -f "$OVERVIEW_TEMPLATE" ]]; then
     
     # Register server.md and client.md in overview.md
     # Find the table marker and add entries
-    local table_marker="|------|----------|"
+    table_marker="|------|----------|"
     if grep -q "$table_marker" "$OVERVIEW_FILE"; then
         sed -i.bak "/$table_marker/a\\
 | [server.md](./server.md) | 📝 待分析 |\\
