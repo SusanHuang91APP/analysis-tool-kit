@@ -36,3 +36,6 @@ out/
 # Log files
 *.log
 logs/
+
+!.cursor/commands
+.cursor

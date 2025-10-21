@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Feature creation utilities - extracted from spec-kit's create-new-feature.sh
+# Feature creation utilities for Analysis Tool Kit V2
 # Provides reusable functions for creating features, analyses, or any numbered directories
 #
 
@@ -20,6 +20,30 @@ get_next_number() {
             local number=$(echo "$dirname" | grep -o '^[0-9]\+' || echo "0")
             number=$((10#$number))
             if [ "$number" -gt "$highest" ]; then highest=$number; fi
+        done
+    fi
+    
+    local next=$((highest + 1))
+    echo "$next"
+}
+
+# Gets the next available number for files in a directory (e.g., features/, apis/)
+# Usage: get_next_file_number "/path/to/features"
+get_next_file_number() {
+    local parent_dir="$1"
+    mkdir -p "$parent_dir"
+    
+    local highest=0
+    if [ -d "$parent_dir" ]; then
+        for file in "$parent_dir"/*; do
+            [ -f "$file" ] || continue
+            local filename=$(basename "$file")
+            # Extract number from ###-name.md format
+            local number=$(echo "$filename" | grep -o '^\[[0-9]\+\]' | tr -d '[]' || echo "0")
+            if [[ -n "$number" ]]; then
+                number=$((10#$number))
+                if [ "$number" -gt "$highest" ]; then highest=$number; fi
+            fi
         done
     fi
     
@@ -77,7 +101,7 @@ create_dir_name() {
 }
 
 # Creates a complete feature environment (branch + directory + template)
-# Usage: create_feature_environment "prefix" "description" "parent_dir" "template_file"
+# Usage: create_feature_environment "prefix" "description" "parent_dir" "template_file" "target_filename"
 create_feature_environment() {
     local branch_prefix="$1"
     local description="$2"
@@ -129,6 +153,42 @@ BRANCH_NAME="$branch_name"
 FEATURE_DIR="$feature_dir"
 DIR_NAME="$dir_name"
 EOF
+}
+
+# Create shared environment structure
+# Usage: create_shared_environment "$analysis_base_dir" "$templates_dir"
+create_shared_environment() {
+    local analysis_base_dir="$1"
+    local templates_dir="$2"
+    local shared_dir="$analysis_base_dir/shared"
+    
+    # Create shared directory and subdirectories
+    mkdir -p "$shared_dir/request-pipeline"
+    mkdir -p "$shared_dir/components"
+    mkdir -p "$shared_dir/helpers"
+    
+    # Create shared overview.md if not exists
+    local overview_file="$shared_dir/overview.md"
+    if [[ ! -f "$overview_file" ]]; then
+        local overview_template="$templates_dir/overview-template.md"
+        if [[ -f "$overview_template" ]]; then
+            cp "$overview_template" "$overview_file"
+            
+            # Update template placeholders
+            local current_date=$(date +%Y-%m-%d)
+            sed -i.bak \
+                -e "s/\[Topic Name\]/Shared Components/g" \
+                -e "s/\[YYYY-MM-DD\]/$current_date/g" \
+                "$overview_file"
+            rm -f "${overview_file}.bak"
+            
+            if command -v log_success >/dev/null 2>&1; then
+                log_success "Created shared/overview.md"
+            fi
+        fi
+    fi
+    
+    echo "$shared_dir"
 }
 
 # JSON output version of create_feature_environment
@@ -220,3 +280,4 @@ validate_directory_structure() {
         fi
     done
 }
+
