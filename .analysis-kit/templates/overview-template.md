@@ -1,4 +1,4 @@
-# [Topic Name] 分析總覽
+# __TOPIC_NAME__ 分析總覽
 
 ---
 
@@ -22,8 +22,8 @@
 ---
 
 ## 📊 分析進度
-- 開始日期：YYYY-MM-DD
-- 最後更新：YYYY-MM-DD
+- 開始日期：__CURRENT_DATE__
+- 最後更新：__CURRENT_DATE__
 - 整體完成度：XX%
 
 ## 📂 分析檔案清單

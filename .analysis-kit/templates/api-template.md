@@ -1,8 +1,8 @@
-# [API 名稱] - API Endpoint Analysis
+# __NAME__ - API Endpoint Analysis
 
 > **🎯 分析品質**：⭐ 基礎框架 (0%)  
-> **📅 開始日期**：YYYY-MM-DD  
-> **📅 最後更新**：YYYY-MM-DD  
+> **📅 開始日期**：__CURRENT_DATE__  
+> **📅 最後更新**：__CURRENT_DATE__  
 > **📊 分析階段**：📝 待分析  
 > **🔗 相關文件**：[連結到 overview.md](./overview.md)
 
@@ -10,21 +10,9 @@
 
 ## 📂 分析檔案資訊
 
-**後端實作檔案：**
-- [待補充：後端 API 實作檔案路徑]
-
-**前端調用檔案：**
-- [待補充：前端調用此 API 的檔案路徑（如有）]
-
-**範例：**
-```
-後端：
-- /Controllers/Api/MemberController.cs
-- /Services/MemberService.cs
-
-前端：
-- /ClientApp/src/services/MemberApiService.ts
-```
+| 檔案路徑 |
+|---------|
+| [待補充：被分析的原始檔案完整路徑] |
 
 ---
 

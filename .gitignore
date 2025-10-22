@@ -39,3 +39,4 @@ logs/
 
 !.cursor/commands
 .cursor
+analysis/

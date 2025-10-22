@@ -140,19 +140,43 @@ show_help() {
     echo "  $0 request-pipeline Filters/AuthFilter.cs"
 }
 
+# --- Argument Parsing ---
+TYPE=""
+NAME=""
+SOURCE_FILES=()
+JSON_MODE=false
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --type)
+            TYPE="$2"
+            shift; shift
+            ;;
+        --name)
+            NAME="$2"
+            shift; shift
+            ;;
+        --json)
+            JSON_MODE=true
+            shift
+            ;;
+        --help|-h)
+            show_help
+            exit 0
+            ;;
+        *)
+            SOURCE_FILES+=("$1")
+            shift
+            ;;
+    esac
+done
+
+
 # --- Main ---
 
-if [[ "$1" == "--help" || "$1" == "-h" ]]; then
-    show_help
-    exit 0
-fi
-
-TYPE="$1"
-shift
-SOURCE_FILES=("$@")
-
 if [[ -z "$TYPE" ]]; then
-    log_error "Error: Type parameter is missing." >&2
+    log_error "Error: --type parameter is missing." >&2
     show_help >&2
     exit 1
 fi
@@ -188,7 +212,9 @@ if [[ ! -f "$TEMPLATE_FILE" ]]; then
 fi
 
 # --- Infer Filename ---
-if [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
+if [[ -n "$NAME" ]]; then
+    INFERRED_NAME=$(echo "$NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+elif [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
     INFERRED_NAME=$(infer_filename_from_sources "${SOURCE_FILES[@]}")
 else
     INFERRED_NAME="unnamed"
@@ -210,7 +236,7 @@ else
     # Feature, api, shared types - use numbered format ###-name.md
     FILE_NUM=$(get_next_file_number "$TARGET_DIR")
     FORMATTED_NUM=$(format_number "$FILE_NUM")
-    FILE_NAME="[${FORMATTED_NUM}]-${INFERRED_NAME}.md"
+    FILE_NAME="${FORMATTED_NUM}-${INFERRED_NAME}.md"
     FILE_PATH="$TARGET_DIR/$FILE_NAME"
 fi
 
@@ -221,12 +247,8 @@ cp "$TEMPLATE_FILE" "$FILE_PATH"
 # Update template placeholders
 CURRENT_DATE=$(date +%Y-%m-%d)
 sed -i.bak \
-    -e "s/\[###\]/$FORMATTED_NUM/g" \
-    -e "s/\[name\]/$INFERRED_NAME/g" \
-    -e "s/\[功能名稱\]/$INFERRED_NAME/g" \
-    -e "s/\[API名稱\]/$INFERRED_NAME/g" \
-    -e "s/\[元件名稱\]/$INFERRED_NAME/g" \
-    -e "s/\[YYYY-MM-DD\]/$CURRENT_DATE/g" \
+    -e "s/__NAME__/$INFERRED_NAME/g" \
+    -e "s/__CURRENT_DATE__/$CURRENT_DATE/g" \
     "$FILE_PATH"
 rm -f "${FILE_PATH}.bak"
 
@@ -284,7 +306,7 @@ if [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
     done
     
     log_info ""
-    log_info "Source files provided for initial analysis:"
+    log_info "Source files provided:"
     log_info "  Technology stack: $TECH_STACK"
     [[ ${#VIEW_FILES[@]} -gt 0 ]] && log_info "  Views: ${VIEW_FILES[*]}"
     [[ ${#CONTROLLER_FILES[@]} -gt 0 ]] && log_info "  Controllers: ${CONTROLLER_FILES[*]}"
@@ -292,7 +314,7 @@ if [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
     [[ ${#API_FILES[@]} -gt 0 ]] && log_info "  API Routes: ${API_FILES[*]}"
     [[ ${#SERVICE_FILES[@]} -gt 0 ]] && log_info "  Services: ${SERVICE_FILES[*]}"
     log_info ""
-    log_info "AI should now perform first-pass analysis on $FILE_NAME"
+    log_info "AI should fill metadata table with source files list."
 fi
 
 # --- Output Results ---
@@ -303,4 +325,9 @@ log_info "Registered in: $OVERVIEW_FILE"
 log_info "Quality level: 📝 待分析"
 log_info ""
 log_info "Next step: Use /analysis.analyze $FILE_NAME [source-files...] to improve quality."
+
+if $JSON_MODE; then
+    printf '{"FILE_PATH":"%s","FILE_NAME":"%s","OVERVIEW_FILE":"%s"}\n' \
+           "$FILE_PATH" "$FILE_NAME" "$OVERVIEW_FILE"
+fi
 

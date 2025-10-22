@@ -1,8 +1,8 @@
-# [Pipeline 名稱] - Request Pipeline Analysis
+# __NAME__ - Request Pipeline Analysis
 
 > **🎯 分析品質**：⭐ 基礎框架 (0%)  
-> **📅 開始日期**：YYYY-MM-DD  
-> **📅 最後更新**：YYYY-MM-DD  
+> **📅 開始日期**：__CURRENT_DATE__  
+> **📅 最後更新**：__CURRENT_DATE__  
 > **📊 分析階段**：📝 待分析  
 > **🔗 相關文件**：[連結到 shared/overview.md](../overview.md)
 
@@ -10,15 +10,9 @@
 
 ## 📂 分析檔案資訊
 
-**原始檔案路徑：**
-- [待補充：被分析的原始檔案完整路徑]
-
-**範例：**
-```
-/Filters/AuthenticationFilter.cs
-/Middleware/LoggingMiddleware.cs
-/src/middleware/authMiddleware.ts
-```
+| 檔案路徑 |
+|---------|
+| [待補充：被分析的原始檔案完整路徑] |
 
 ---
 

@@ -70,7 +70,6 @@ log_info "Setting up Topic structure..."
 mkdir -p "$FEATURE_DIR/features"
 mkdir -p "$FEATURE_DIR/apis"
 
-# Extract topic number and name
 TOPIC_NUM=$(echo "$DIR_NAME" | grep -o '^[0-9]\+')
 TOPIC_NAME_SLUG=$(echo "$DIR_NAME" | sed 's/^[0-9]*-//')
 CURRENT_DATE=$(date +%Y-%m-%d)
@@ -80,9 +79,8 @@ SERVER_TEMPLATE="$TEMPLATES_DIR/server-template.md"
 if [[ -f "$SERVER_TEMPLATE" ]]; then
     cp "$SERVER_TEMPLATE" "$FEATURE_DIR/server.md"
     sed -i.bak \
-        -e "s/\[###\]/$TOPIC_NUM/g" \
-        -e "s/\[topic-name\]/$TOPIC_NAME/g" \
-        -e "s/\[頁面名稱\]/$TOPIC_NAME/g" \
+        -e "s/__TOPIC_NAME__/$TOPIC_NAME/g" \
+        -e "s/__CURRENT_DATE__/$CURRENT_DATE/g" \
         "$FEATURE_DIR/server.md"
     rm -f "$FEATURE_DIR/server.md.bak"
     log_success "Created server.md"
@@ -95,9 +93,8 @@ CLIENT_TEMPLATE="$TEMPLATES_DIR/client-template.md"
 if [[ -f "$CLIENT_TEMPLATE" ]]; then
     cp "$CLIENT_TEMPLATE" "$FEATURE_DIR/client.md"
     sed -i.bak \
-        -e "s/\[###\]/$TOPIC_NUM/g" \
-        -e "s/\[topic-name\]/$TOPIC_NAME/g" \
-        -e "s/\[頁面名稱\]/$TOPIC_NAME/g" \
+        -e "s/__TOPIC_NAME__/$TOPIC_NAME/g" \
+        -e "s/__CURRENT_DATE__/$CURRENT_DATE/g" \
         "$FEATURE_DIR/client.md"
     rm -f "$FEATURE_DIR/client.md.bak"
     log_success "Created client.md"
@@ -114,9 +111,8 @@ if [[ -f "$OVERVIEW_TEMPLATE" ]]; then
     
     # Update template placeholders
     sed -i.bak \
-        -e "s/\[Topic Name\]/$TOPIC_NAME/g" \
-        -e "s/\[YYYY-MM-DD\]/$CURRENT_DATE/g" \
-        -e "s/\[###\]/$TOPIC_NUM/g" \
+        -e "s/__TOPIC_NAME__/$TOPIC_NAME/g" \
+        -e "s/__CURRENT_DATE__/$CURRENT_DATE/g" \
         "$OVERVIEW_FILE"
     rm -f "${OVERVIEW_FILE}.bak"
     

@@ -1,8 +1,8 @@
-# [功能名稱] - Feature Analysis
+# __NAME__ - Feature Analysis
 
 > **🎯 分析品質**：⭐ 基礎框架 (0%)  
-> **📅 開始日期**：YYYY-MM-DD  
-> **📅 最後更新**：YYYY-MM-DD  
+> **📅 開始日期**：__CURRENT_DATE__  
+> **📅 最後更新**：__CURRENT_DATE__  
 > **📊 分析階段**：📝 待分析  
 > **🔗 相關文件**：[連結到 overview.md](./overview.md)
 
@@ -10,20 +10,9 @@
 
 ## 📂 分析檔案資訊
 
-**涉及的檔案：**
-- [待補充：此功能涉及的所有前後端檔案路徑]
-
-**範例：**
-```
-前端：
-- /ClientApp/src/pages/VipMember/Index.tsx
-- /ClientApp/src/components/MemberForm.tsx
-
-後端：
-- /Controllers/VipMemberController.cs
-- /Services/MemberService.cs
-- /Repositories/MemberRepository.cs
-```
+| 檔案路徑 |
+|---------|
+| [待補充：被分析的原始檔案完整路徑] |
 
 ---
 

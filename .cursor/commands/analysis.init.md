@@ -67,43 +67,43 @@ flowchart TD
 
 ### Phase 0: 執行腳本初始化環境 (Script Execution)
 
-1. **執行初始化腳本**:
-   
-   使用 `run_terminal_cmd` 執行：
-   ```bash
-   .analysis-kit/scripts/analysis-init.sh --json "<topic_name>"
-   ```
+1.  **執行初始化腳本**:
+    
+    使用 `run_terminal_cmd` 執行：
+    ```bash
+    .analysis-kit/scripts/analysis-init.sh --json "<topic_name>"
+    ```
 
-2. **解析腳本輸出**:
-   
-   腳本會輸出 JSON 格式結果，包含：
-   - `BRANCH_NAME`: 新建立的 Git 分支名稱（例如：`analysis/001-會員管理功能`）
-   - `TOPIC_DIR`: Topic 目錄完整路徑
-   - `DIR_NAME`: 目錄名稱（例如：`001-會員管理功能`）
+2.  **解析腳本輸出**:
+    
+    腳本會輸出 JSON 格式結果，包含：
+    - `BRANCH_NAME`: 新建立的 Git 分支名稱（例如：`analysis/001-會員管理功能`）
+    - `TOPIC_DIR`: Topic 目錄完整路徑
+    - `DIR_NAME`: 目錄名稱（例如：`001-會員管理功能`）
 
-3. **驗證結果**:
-   
-   確認以下項目已被腳本自動建立：
-   - ✅ Git 分支已建立並切換
-   - ✅ Topic 目錄已建立
-   - ✅ `server.md` 已建立（使用 server-template.md）
-   - ✅ `client.md` 已建立（使用 client-template.md）
-   - ✅ `overview.md` 已建立並註冊 server.md 和 client.md
-   - ✅ `features/` 空目錄已建立
-   - ✅ `apis/` 空目錄已建立
-   - ✅ `analysis/shared/` 結構已建立（首次執行時）
+3.  **驗證結果**:
+    
+    確認以下項目已被腳本自動建立：
+    - ✅ Git 分支已建立並切換
+    - ✅ Topic 目錄已建立
+    - ✅ `server.md` 已建立（使用 server-template.md）
+    - ✅ `client.md` 已建立（使用 client-template.md）
+    - ✅ `overview.md` 已建立並註冊 server.md 和 client.md
+    - ✅ `features/` 空目錄已建立
+    - ✅ `apis/` 空目錄已建立
+    - ✅ `analysis/shared/` 結構已建立（首次執行時）
 
 ### Phase 1: 確認環境無需 AI 介入 (Verification Only)
 
 [ **CRITICAL**: 此指令的主要工作由腳本完成，AI 只需確認和回報。]
 
-1. **讀取 overview.md**: 讀取新建立的 `overview.md`，確認 server.md 和 client.md 已正確註冊。
+1.  **讀取 overview.md**: 讀取新建立的 `overview.md`，確認 server.md 和 client.md 已正確註冊。
 
-2. **確認結構完整**: 驗證所有必要檔案和目錄都已存在。
+2.  **確認結構完整**: 驗證所有必要檔案和目錄都已存在。
 
 ### Phase 2: 回報完成狀態 (Report)
 
-1. **確認產出**:
+1.  **確認產出**:
 
    - ✅ Git 分支：`<BRANCH_NAME>`
    - ✅ Topic 目錄：`<TOPIC_DIR>`
@@ -141,8 +141,6 @@ flowchart TD
 - **規則 4**: 首次執行時，腳本會自動建立 `analysis/shared/` 完整結構。
 
 - **規則 5**: Topic 編號 `###` 由腳本自動計算，掃描現有 `analysis/` 目錄決定。
-
-- **規則 6**: 所有檔案路徑必須使用腳本輸出的絕對路徑。
 
 ---
 
