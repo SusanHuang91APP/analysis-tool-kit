@@ -33,15 +33,11 @@ flowchart TD
     VerifyStructure --> CheckFiles{檢查檔案}
     CheckFiles --> |Git 分支| BranchOK[✓ 分支已建立]
     CheckFiles --> |Topic 目錄| DirOK[✓ 目錄已建立]
-    CheckFiles --> |server.md| ServerOK[✓ 後端檔案已建立]
-    CheckFiles --> |client.md| ClientOK[✓ 前端檔案已建立]
     CheckFiles --> |overview.md| OverviewOK[✓ 追蹤檔案已建立]
     CheckFiles --> |Shared 結構| SharedOK[✓ 共用結構已確保]
     
     BranchOK --> ReadOverview[讀取 overview.md]
     DirOK --> ReadOverview
-    ServerOK --> ReadOverview
-    ClientOK --> ReadOverview
     OverviewOK --> ReadOverview
     SharedOK --> ReadOverview
     
@@ -86,9 +82,7 @@ flowchart TD
     確認以下項目已被腳本自動建立：
     - ✅ Git 分支已建立並切換
     - ✅ Topic 目錄已建立
-    - ✅ `server.md` 已建立（使用 server-template.md）
-    - ✅ `client.md` 已建立（使用 client-template.md）
-    - ✅ `overview.md` 已建立並註冊 server.md 和 client.md
+    - ✅ `overview.md` 已建立（空的檔案清單表格）
     - ✅ `features/` 空目錄已建立
     - ✅ `apis/` 空目錄已建立
     - ✅ `analysis/shared/` 結構已建立（首次執行時）
@@ -97,7 +91,7 @@ flowchart TD
 
 [ **CRITICAL**: 此指令的主要工作由腳本完成，AI 只需確認和回報。]
 
-1.  **讀取 overview.md**: 讀取新建立的 `overview.md`，確認 server.md 和 client.md 已正確註冊。
+1.  **讀取 overview.md**: 讀取新建立的 `overview.md`，確認結構正確。
 
 2.  **確認結構完整**: 驗證所有必要檔案和目錄都已存在。
 
@@ -108,9 +102,7 @@ flowchart TD
    - ✅ Git 分支：`<BRANCH_NAME>`
    - ✅ Topic 目錄：`<TOPIC_DIR>`
    - ✅ 標準檔案已建立：
-     - `overview.md` (追蹤檔案清單)
-     - `server.md` (後端分析，狀態：📝 待分析)
-     - `client.md` (前端分析，狀態：📝 待分析)
+     - `overview.md` (追蹤檔案清單，空的表格)
      - `features/` (功能分析目錄)
      - `apis/` (API 分析目錄)
    - ✅ Shared 結構已確保存在：
@@ -123,7 +115,7 @@ flowchart TD
 
    - 🔜 使用 `/analysis.create <type> [source-files...]` 來建立具體的分析檔案
    - 📝 可用類型：
-     - **Topic 類型**: `feature`, `api` (server.md 和 client.md 已存在)
+     - **Topic 類型**: `server`, `client`, `feature`, `api`
      - **Shared 類型**: `request-pipeline`, `component`, `helper`
 
 ---
@@ -169,9 +161,7 @@ analysis/
 │   ├── components/
 │   └── helpers/
 └── 001-會員管理功能/              # 新建立的 Topic
-    ├── overview.md                  # 追蹤清單
-    ├── server.md                    # 後端分析 (📝 待分析)
-    ├── client.md                    # 前端分析 (📝 待分析)
+    ├── overview.md                  # 追蹤清單（空的表格）
     ├── features/                    # 功能分析（空）
     └── apis/                        # API 分析（空）
 ```
