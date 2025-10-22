@@ -8,15 +8,28 @@
 
 ---
 
-## 📂 分析檔案資訊
+## 1. 📝 核心摘要與依賴 (Core Summary & Dependencies)
+
+### 1.1 📂 分析檔案資訊 (Analyzed Files)
 
 | 檔案路徑 |
 |---------|
 | [待補充：被分析的原始檔案完整路徑] |
 
+### 1.2 📦 依賴關係 (Dependencies)
+
+| 類型 | 名稱 | 用途 | 檔案連結 |
+|------|------|------|----------|
+| Component | [元件名稱] | [元件用途] | [分析文件連結] |
+| Service | [服務名稱] | [服務用途] | [分析文件連結] |
+| Hook | [Hook名稱] | [Hook用途] | [分析文件連結] |
+| Helper | [工具名稱] | [工具用途] | [分析文件連結] |
+
+**說明：** 此表格追蹤本元件依賴的所有外部元件、服務與工具。
+
 ---
 
-## 📋 分析指引 (Analysis Guidelines)
+## 2. 📋 分析指引 (Analysis Guidelines)
 
 **此文件的分析目標：**
 
@@ -36,9 +49,47 @@
 
 ---
 
-## 1. 元件基本資訊 (Component Information)
+## 3. 前端架構藍圖 (Frontend Architecture Blueprint)
 
-### 1.1 元件定義
+### 3.1 View 引擎 / 框架架構 (View Engine / Framework)
+**技術選型**：
+- [描述使用的前端技術及其版本]
+**架構模式**：
+- [描述使用的架構模式與設計原則]
+
+### 3.2 資料初始化流程 (Data Initialization)
+**伺服器端資料 (Server-Side Data)**：
+- **主要資料模型**：`[資料模型名稱]`
+- **初始資料注入**：[描述如何將資料從伺服器傳遞到客戶端]
+**客戶端初始化 (Client-Side Initialization)**：
+- **資料取得方式**：[描述前端如何取得初始資料]
+- **載入策略**：[描述同步/非同步載入模式]
+
+### 3.3 狀態管理策略 (State Management)
+**狀態管理方案**：
+- [描述使用的狀態管理方案]
+**狀態結構**：
+- [描述主要的狀態結構]
+**狀態更新模式**：
+- [描述狀態如何更新、誰可以更新、更新流程]
+
+### 3.4 前端路由 (Frontend Routing)
+**路由方案**：
+- [描述路由方案]
+**路由配置**：
+```typescript
+// 路由表範例
+const routes = [
+  { path: '/vip-member', component: VipMemberPage },
+  { path: '/vip-member/profile', component: ProfilePage },
+];
+```
+
+---
+
+## 4. 元件基本資訊 (Component Information)
+
+### 4.1 元件定義
 
 **基本資訊：**
 - **元件名稱**：[待補充]
@@ -48,7 +99,7 @@
 
 ---
 
-### 1.2 元件職責
+### 4.2 元件職責
 
 **核心職責：**
 - [待補充：描述此元件的主要責任]
@@ -58,9 +109,9 @@
 
 ---
 
-## 2. UI 結構與互動 (UI Structure & Interaction)
+## 5. UI 結構與互動 (UI Structure & Interaction)
 
-### 2.1 元件結構
+### 5.1 元件結構
 
 **HTML/JSX 結構：**
 ```html
@@ -78,7 +129,38 @@
 
 ---
 
-### 2.2 樣式分析
+### 5.2 關鍵 DOM 結構
+
+**重要 DOM 節點：**
+- [待補充：列出關鍵的 DOM 元素及其選取器]
+- 範例：
+  - `#main-container` - 主容器
+  - `.product-list` - 商品列表容器
+  - `[data-action="submit"]` - 提交按鈕
+
+**DOM 層級結構：**
+```
+[待補充：用純文字或樹狀圖展示 DOM 層級關係]
+例如：
+html
+  └── body
+      └── #app
+          ├── header.site-header
+          │   ├── .logo
+          │   └── nav.main-nav
+          ├── main#content
+          │   ├── .product-list
+          │   │   └── .product-item (多個)
+          │   └── .pagination
+          └── footer.site-footer
+```
+
+**關鍵 DOM 操作：**
+- [待補充：JavaScript/Framework 如何操作這些 DOM 節點]
+
+---
+
+### 5.3 樣式分析
 
 **CSS 類別：**
 - `.class-name` - [待補充：樣式用途]
@@ -92,7 +174,7 @@
 
 ---
 
-### 2.3 互動流程
+### 5.4 互動流程
 
 **使用者操作流程：**
 1. **操作1**：使用者點擊按鈕
@@ -119,9 +201,9 @@ sequenceDiagram
 
 ---
 
-## 3. 狀態與業務邏輯 (State & Business Logic)
+## 6. 狀態與業務邏輯 (State & Business Logic)
 
-### 3.1 狀態管理
+### 6.1 狀態管理
 
 **狀態變數：**
 ```typescript
@@ -146,7 +228,7 @@ graph LR
 
 ---
 
-### 3.2 Props 介面
+### 6.2 Props 介面
 
 **Props 定義：**
 ```typescript
@@ -165,7 +247,7 @@ interface ComponentProps {
 
 ---
 
-### 3.3 事件處理
+### 6.3 事件處理
 
 **事件處理函式：**
 
@@ -194,7 +276,7 @@ const handleSubmit = async () => {
 
 ---
 
-### 3.4 生命週期 / Hooks
+### 6.4 生命週期 / Hooks
 
 **生命週期方法：**
 - `componentDidMount` / `useEffect` - [待補充：用途]
@@ -213,22 +295,9 @@ useEffect(() => {
 
 ---
 
-## 4. 📦 依賴關係 (Dependencies)
+## 7. 架構與品質分析 (Architecture & Quality Analysis)
 
-| 類型 | 名稱 | 用途 | 檔案連結 |
-|------|------|------|----------|
-| Component | [元件名稱] | [元件用途] | [分析文件連結] |
-| Service | [服務名稱] | [服務用途] | [分析文件連結] |
-| Hook | [Hook名稱] | [Hook用途] | [分析文件連結] |
-| Helper | [工具名稱] | [工具用途] | [分析文件連結] |
-
-**說明：** 此表格追蹤本元件依賴的所有外部元件、服務與工具。
-
----
-
-## 5. 架構與品質分析 (Architecture & Quality Analysis)
-
-### 5.1 效能優化
+### 7.1 效能優化
 
 **效能檢查清單：**
 - [ ] 使用 React.memo / Vue.memo 避免不必要的重渲染
@@ -243,7 +312,7 @@ useEffect(() => {
 
 ---
 
-### 5.2 可訪問性 (Accessibility)
+### 7.2 可訪問性 (Accessibility)
 
 **a11y 檢查清單：**
 - [ ] 語義化 HTML 標籤
@@ -258,7 +327,7 @@ useEffect(() => {
 
 ---
 
-### 5.3 可重用性評估
+### 7.3 可重用性評估
 
 **可重用性分析：**
 - **當前使用場景**：[待補充]
@@ -267,7 +336,7 @@ useEffect(() => {
 
 ---
 
-### 5.4 測試覆蓋
+### 7.4 測試覆蓋
 
 **測試策略：**
 - [ ] 單元測試（Jest/Vitest）
@@ -277,7 +346,7 @@ useEffect(() => {
 
 ---
 
-## 6. 📋 品質檢查清單 (Quality Checklist)
+## 8. 📋 品質檢查清單 (Quality Checklist)
 
 ### ⭐ 基礎框架 (1-40%)
 - [ ] 文件元數據完整（日期、品質等級）

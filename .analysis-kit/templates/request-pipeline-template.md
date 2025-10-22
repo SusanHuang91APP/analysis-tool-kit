@@ -8,15 +8,26 @@
 
 ---
 
-## 📂 分析檔案資訊
+## 1. 📝 核心摘要與依賴 (Core Summary & Dependencies)
+
+### 1.1 📂 分析檔案資訊 (Analyzed Files)
 
 | 檔案路徑 |
 |---------|
 | [待補充：被分析的原始檔案完整路徑] |
 
+### 1.2 📦 依賴關係 (Dependencies)
+
+| 類型 | 名稱 | 用途 | 檔案連結 |
+|------|------|------|----------|
+| Service | [服務名稱] | [服務用途] | [分析文件連結] |
+| Helper | [工具名稱] | [工具用途] | [分析文件連結] |
+
+**說明：** 此表格追蹤本 Pipeline 元件依賴的所有外部服務與工具。
+
 ---
 
-## 📋 分析指引 (Analysis Guidelines)
+## 2. 📋 分析指引 (Analysis Guidelines)
 
 **此文件的分析目標：**
 
@@ -37,9 +48,9 @@
 
 ---
 
-## 1. Pipeline 元件資訊 (Component Information)
+## 3. Pipeline 元件資訊 (Component Information)
 
-### 1.1 元件定義
+### 3.1 元件定義
 
 **基本資訊：**
 - **元件名稱**：[待補充]
@@ -49,7 +60,7 @@
 
 ---
 
-### 1.2 註冊方式與順序
+### 3.2 註冊方式與順序
 
 **註冊方式：**
 ```csharp
@@ -73,7 +84,7 @@ app.use(middlewareName);
 
 ---
 
-### 1.3 適用範圍
+### 3.3 適用範圍
 
 **適用目標：**
 - [ ] 全域（所有請求）
@@ -86,9 +97,9 @@ app.use(middlewareName);
 
 ---
 
-## 2. 執行邏輯 (Execution Logic)
+## 4. 執行邏輯 (Execution Logic)
 
-### 2.1 觸發條件
+### 4.1 觸發條件
 
 **觸發時機：**
 - [待補充：在什麼情況下觸發此 Pipeline]
@@ -102,7 +113,7 @@ if (condition) {
 
 ---
 
-### 2.2 處理流程
+### 4.2 處理流程
 
 **執行步驟：**
 1. **步驟1**：接收請求/回應
@@ -127,7 +138,7 @@ graph TD
 
 ---
 
-### 2.3 短路邏輯
+### 4.3 短路邏輯
 
 **短路條件：**
 [待補充：在什麼情況下會短路（不繼續執行後續 Pipeline）]
@@ -148,9 +159,9 @@ graph LR
 
 ---
 
-## 3. 請求/回應處理 (Request/Response Handling)
+## 5. 請求/回應處理 (Request/Response Handling)
 
-### 3.1 請求攔截
+### 5.1 請求攔截
 
 **攔截邏輯：**
 ```csharp
@@ -175,7 +186,7 @@ public override void OnActionExecuting(ActionExecutingContext context)
 
 ---
 
-### 3.2 回應修改
+### 5.2 回應修改
 
 **修改邏輯：**
 ```csharp
@@ -194,7 +205,7 @@ public override void OnActionExecuted(ActionExecutedContext context)
 
 ---
 
-### 3.3 標頭處理
+### 5.3 標頭處理
 
 **請求標頭讀取：**
 ```csharp
@@ -204,89 +215,6 @@ var header = context.HttpContext.Request.Headers["HeaderName"];
 **回應標頭設定：**
 ```csharp
 context.HttpContext.Response.Headers.Add("HeaderName", "Value");
-```
-
----
-
-## 4. 📦 依賴關係 (Dependencies)
-
-| 類型 | 名稱 | 用途 | 檔案連結 |
-|------|------|------|----------|
-| Service | [服務名稱] | [服務用途] | [分析文件連結] |
-| Helper | [工具名稱] | [工具用途] | [分析文件連結] |
-
-**說明：** 此表格追蹤本 Pipeline 元件依賴的所有外部服務與工具。
-
----
-
-## 5. 架構與品質分析 (Architecture & Quality Analysis)
-
-### 5.1 效能影響評估
-
-**效能影響：**
-- **執行時間**：[待補充：平均執行時間]
-- **資源消耗**：[待補充：CPU/記憶體使用]
-
-**效能檢查清單：**
-- [ ] 避免重複計算
-- [ ] 快取常用資料
-- [ ] 非同步處理（如適用）
-- [ ] 避免阻塞操作
-
-**優化建議：**
-- [待補充：具體的優化方案]
-
----
-
-### 5.2 安全性檢查
-
-**安全責任：**
-[待補充：此 Pipeline 在安全性方面的責任]
-
-**安全檢查清單：**
-- [ ] 輸入驗證
-- [ ] 授權檢查
-- [ ] SQL 注入防護
-- [ ] XSS 防護
-- [ ] CSRF 防護
-
-**安全風險：**
-- [待補充：已識別的安全風險]
-
----
-
-### 5.3 錯誤處理
-
-**錯誤處理策略：**
-```csharp
-try
-{
-    // Pipeline 邏輯
-}
-catch (Exception ex)
-{
-    // 錯誤處理
-    logger.Error(ex);
-    context.Result = new JsonResult(new { error = "..." });
-}
-```
-
-**錯誤類型：**
-- `ExceptionType1` - [待補充：處理方式]
-- `ExceptionType2` - [待補充：處理方式]
-
----
-
-### 5.4 日誌記錄
-
-**日誌策略：**
-- **記錄時機**：[待補充：何時記錄日誌]
-- **日誌等級**：Debug / Info / Warning / Error
-- **記錄內容**：[待補充：記錄哪些資訊]
-
-**日誌範例：**
-```csharp
-logger.Info($"Pipeline executed: {pipelineName}");
 ```
 
 ---
@@ -334,7 +262,79 @@ public class MyController : Controller
 
 ---
 
-## 7. 📋 品質檢查清單 (Quality Checklist)
+## 7. 架構與品質分析 (Architecture & Quality Analysis)
+
+### 7.1 效能影響評估
+
+**效能影響：**
+- **執行時間**：[待補充：平均執行時間]
+- **資源消耗**：[待補充：CPU/記憶體使用]
+
+**效能檢查清單：**
+- [ ] 避免重複計算
+- [ ] 快取常用資料
+- [ ] 非同步處理（如適用）
+- [ ] 避免阻塞操作
+
+**優化建議：**
+- [待補充：具體的優化方案]
+
+---
+
+### 7.2 安全性檢查
+
+**安全責任：**
+[待補充：此 Pipeline 在安全性方面的責任]
+
+**安全檢查清單：**
+- [ ] 輸入驗證
+- [ ] 授權檢查
+- [ ] SQL 注入防護
+- [ ] XSS 防護
+- [ ] CSRF 防護
+
+**安全風險：**
+- [待補充：已識別的安全風險]
+
+---
+
+### 7.3 錯誤處理
+
+**錯誤處理策略：**
+```csharp
+try
+{
+    // Pipeline 邏輯
+}
+catch (Exception ex)
+{
+    // 錯誤處理
+    logger.Error(ex);
+    context.Result = new JsonResult(new { error = "..." });
+}
+```
+
+**錯誤類型：**
+- `ExceptionType1` - [待補充：處理方式]
+- `ExceptionType2` - [待補充：處理方式]
+
+---
+
+### 7.4 日誌記錄
+
+**日誌策略：**
+- **記錄時機**：[待補充：何時記錄日誌]
+- **日誌等級**：Debug / Info / Warning / Error
+- **記錄內容**：[待補充：記錄哪些資訊]
+
+**日誌範例：**
+```csharp
+logger.Info($"Pipeline executed: {pipelineName}");
+```
+
+---
+
+## 8. 📋 品質檢查清單 (Quality Checklist)
 
 ### ⭐ 基礎框架 (1-40%)
 - [ ] 文件元數據完整（日期、品質等級）

@@ -8,15 +8,36 @@
 
 ---
 
-## 📂 分析檔案資訊
+## 1. 📝 核心摘要與依賴 (Core Summary & Dependencies)
+
+### 1.1 📂 分析檔案資訊 (Analyzed Files)
 
 | 檔案路徑 |
 |---------|
 | [待補充：被分析的原始檔案完整路徑] |
 
+### 1.2 📦 依賴關係 (Dependencies)
+
+**後端依賴：**
+
+| 類型 | 名稱 | 用途 | 檔案連結 |
+|------|------|------|----------|
+| Service | [服務名稱] | [服務用途] | [分析文件連結] |
+| Repository | [Repository名稱] | [資料存取用途] | [分析文件連結] |
+| Helper | [工具名稱] | [工具用途] | [分析文件連結] |
+
+**前端依賴：**
+
+| 類型 | 名稱 | 用途 | 檔案連結 |
+|------|------|------|----------|
+| Helper | [工具名稱] | [前端工具用途] | [分析文件連結] |
+| Type | [型別定義] | [TypeScript 型別] | [分析文件連結] |
+
+**說明：** 此表格追蹤本 API 端點在前後端的所有依賴。
+
 ---
 
-## 📋 分析指引 (Analysis Guidelines)
+## 2. 📋 分析指引 (Analysis Guidelines)
 
 **此文件的分析目標：**
 
@@ -37,9 +58,11 @@
 
 ---
 
-## 1. API 基本資訊 (API Basic Information)
+## 3. 後端規格與實作 (Backend Specification & Implementation)
 
-### 1.1 端點定義
+### 3.1 API 基本資訊 (API Basic Information)
+
+#### 3.1.1 端點定義
 
 **基本資訊：**
 - **HTTP Method**：GET / POST / PUT / PATCH / DELETE
@@ -49,7 +72,7 @@
 
 ---
 
-### 1.2 認證授權
+#### 3.1.2 認證授權
 
 **認證方式：**
 - [ ] Bearer Token
@@ -64,9 +87,9 @@
 
 ---
 
-## 2. 請求規格 (Request Specification)
+### 3.2 請求規格 (Request Specification)
 
-### 2.1 路徑參數 (Path Parameters)
+#### 3.2.1 路徑參數 (Path Parameters)
 
 | 參數名稱 | 類型 | 必需 | 說明 | 範例 |
 |---------|------|------|------|------|
@@ -74,7 +97,7 @@
 
 ---
 
-### 2.2 查詢參數 (Query Parameters)
+#### 3.2.2 查詢參數 (Query Parameters)
 
 | 參數名稱 | 類型 | 必需 | 預設值 | 說明 | 範例 |
 |---------|------|------|--------|------|------|
@@ -84,7 +107,7 @@
 
 ---
 
-### 2.3 請求主體 (Request Body)
+#### 3.2.3 請求主體 (Request Body)
 
 **Content-Type**: `application/json`
 
@@ -114,7 +137,7 @@ interface RequestBody {
 
 ---
 
-### 2.4 請求標頭 (Request Headers)
+#### 3.2.4 請求標頭 (Request Headers)
 
 | 標頭名稱 | 必需 | 說明 | 範例 |
 |---------|------|------|------|
@@ -124,9 +147,9 @@ interface RequestBody {
 
 ---
 
-## 3. 回應規格 (Response Specification)
+### 3.3 回應規格 (Response Specification)
 
-### 3.1 成功回應 (Success Response)
+#### 3.3.1 成功回應 (Success Response)
 
 **HTTP 狀態碼：** `200 OK` / `201 Created` / `204 No Content`
 
@@ -156,7 +179,7 @@ interface SuccessResponse {
 
 ---
 
-### 3.2 錯誤回應 (Error Response)
+#### 3.3.2 錯誤回應 (Error Response)
 
 **HTTP 狀態碼與說明：**
 
@@ -198,7 +221,7 @@ interface ErrorResponse {
 
 ---
 
-### 3.3 回應標頭 (Response Headers)
+#### 3.3.3 回應標頭 (Response Headers)
 
 | 標頭名稱 | 說明 | 範例 |
 |---------|------|------|
@@ -208,9 +231,9 @@ interface ErrorResponse {
 
 ---
 
-## 4. 業務邏輯 (Business Logic)
+### 3.4 業務邏輯 (Business Logic)
 
-### 4.1 處理流程
+#### 3.4.1 處理流程
 
 **執行步驟：**
 1. **接收請求**：解析請求參數
@@ -242,7 +265,7 @@ graph TD
 
 ---
 
-### 4.2 資料驗證
+#### 3.4.2 資料驗證
 
 **輸入驗證規則：**
 - `field1`: [待補充：驗證規則]
@@ -254,16 +277,16 @@ graph TD
 
 ---
 
-### 4.3 調用的服務
+#### 3.4.3 調用的服務
 
 **服務調用清單：**
 - `ServiceName.MethodName` - [待補充：用途] - [分析文件連結]
 
 ---
 
-## 5. 前端調用封裝 (Frontend Integration)
+## 4. 前端調用封裝 (Frontend Integration)
 
-### 5.1 Service 類別封裝
+### 4.1 Service 類別封裝
 
 **前端服務封裝：**
 ```typescript
@@ -301,7 +324,7 @@ class ApiService {
 
 ---
 
-### 5.2 錯誤處理封裝
+### 4.2 錯誤處理封裝
 
 **前端錯誤處理：**
 ```typescript
@@ -336,7 +359,7 @@ graph TD
 
 ---
 
-### 5.3 快取與優化
+### 4.3 快取與優化
 
 **快取策略：**
 ```typescript
@@ -364,30 +387,9 @@ public async getWithCache(key: string): Promise<Data> {
 
 ---
 
-## 6. 📦 依賴關係 (Dependencies)
+## 5. 範例與測試 (Examples & Testing)
 
-**後端依賴：**
-
-| 類型 | 名稱 | 用途 | 檔案連結 |
-|------|------|------|----------|
-| Service | [服務名稱] | [服務用途] | [分析文件連結] |
-| Repository | [Repository名稱] | [資料存取用途] | [分析文件連結] |
-| Helper | [工具名稱] | [工具用途] | [分析文件連結] |
-
-**前端依賴：**
-
-| 類型 | 名稱 | 用途 | 檔案連結 |
-|------|------|------|----------|
-| Helper | [工具名稱] | [前端工具用途] | [分析文件連結] |
-| Type | [型別定義] | [TypeScript 型別] | [分析文件連結] |
-
-**說明：** 此表格追蹤本 API 端點在前後端的所有依賴。
-
----
-
-## 7. 範例與測試 (Examples & Testing)
-
-### 7.1 請求範例
+### 5.1 請求範例
 
 **cURL 範例：**
 ```bash
@@ -418,7 +420,7 @@ const data = await response.json();
 
 ---
 
-### 7.2 測試案例
+### 5.2 測試案例
 
 **正常流程測試：**
 1. **案例1**：[正常操作]
@@ -436,29 +438,30 @@ const data = await response.json();
 
 ---
 
-## 7. 架構與品質分析 (Architecture & Quality Analysis)
+## 6. 架構與品質分析 (Architecture & Quality Analysis)
 
-### 7.1 效能考量
+### 6.1 效能考量
 
 **效能檢查清單：**
-- [ ] 資料庫查詢優化（索引、N+1 問題）
-- [ ] 快取策略（Redis/Memory Cache）
-- [ ] 分頁實作（大量資料）
-- [ ] 非同步處理（長時間操作）
-- [ ] 回應壓縮（Gzip）
+- [ ] **資料庫查詢優化**：是否有 N+1 查詢問題？是否已建立適當索引？
+- [ ] **快取策略**：是否對常用資料或高成本計算結果使用快取（Redis/Memory Cache）？
+- [ ] **分頁實作**：針對大量資料返回的端點，是否已實作分頁？
+- [ ] **非同步處理**：是否有長時間執行的操作？是否已改為非同步處理以避免阻塞？
+- [ ] **回應壓縮**：是否已啟用 Gzip 等回應壓縮機制？
 
 **優化建議：**
 - [待補充：具體的優化方案]
 
 ---
 
-### 7.2 安全性評估
+### 6.2 安全性評估
 
 **安全檢查清單：**
 - [ ] 輸入驗證（防止注入攻擊）
 - [ ] SQL 注入防護（使用參數化查詢）
 - [ ] XSS 防護（輸出編碼）
 - [ ] CSRF 防護（Token 驗證）
+- [ ] 授權檢查 (Authorization Check)
 - [ ] 速率限制（Rate Limiting）
 - [ ] 敏感資料加密
 - [ ] HTTPS 強制使用
@@ -468,7 +471,7 @@ const data = await response.json();
 
 ---
 
-### 7.3 錯誤處理策略
+### 6.3 錯誤處理策略
 
 **錯誤處理原則：**
 - 所有錯誤都應返回標準格式
@@ -480,7 +483,7 @@ const data = await response.json();
 
 ---
 
-## 8. 📋 品質檢查清單 (Quality Checklist)
+## 7. 📋 品質檢查清單 (Quality Checklist)
 
 ### ⭐ 基礎框架 (1-40%)
 - [ ] 文件元數據完整（日期、品質等級）

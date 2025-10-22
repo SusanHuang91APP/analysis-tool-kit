@@ -39,7 +39,7 @@ get_next_file_number() {
             [ -f "$file" ] || continue
             local filename=$(basename "$file")
             # Extract number from ###-name.md format
-            local number=$(echo "$filename" | grep -o '^\[[0-9]\+\]' | tr -d '[]' || echo "0")
+            local number=$(echo "$filename" | grep -o '^[0-9]\+' || echo "0")
             if [[ -n "$number" ]]; then
                 number=$((10#$number))
                 if [ "$number" -gt "$highest" ]; then highest=$number; fi

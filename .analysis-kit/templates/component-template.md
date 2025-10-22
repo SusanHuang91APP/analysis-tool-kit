@@ -8,15 +8,27 @@
 
 ---
 
-## 📂 分析檔案資訊
+## 1. 📝 核心摘要與依賴 (Core Summary & Dependencies)
+
+### 1.1 📂 分析檔案資訊 (Analyzed Files)
 
 | 檔案路徑 |
 |---------|
 | [待補充：被分析的原始檔案完整路徑] |
 
+### 1.2 📦 依賴關係 (Dependencies)
+
+| 類型 | 名稱 | 用途 | 檔案連結 |
+|------|------|------|----------|
+| Component | [子元件名稱] | [元件用途] | [分析文件連結] |
+| Hook | [Hook名稱] | [Hook用途] | [分析文件連結] |
+| Helper | [工具名稱] | [工具用途] | [分析文件連結] |
+
+**說明：** 此表格追蹤本元件依賴的所有外部元件、Hooks 與工具。
+
 ---
 
-## 📋 分析指引 (Analysis Guidelines)
+## 2. 📋 分析指引 (Analysis Guidelines)
 
 **此文件的分析目標：**
 
@@ -37,9 +49,9 @@
 
 ---
 
-## 1. 元件基本資訊 (Component Information)
+## 3. 元件基本資訊 (Component Information)
 
-### 1.1 元件定義
+### 3.1 元件定義
 
 **基本資訊：**
 - **元件名稱**：[待補充]
@@ -49,7 +61,7 @@
 
 ---
 
-### 1.2 設計目的
+### 3.2 設計目的
 
 **核心職責：**
 [待補充：用 2-3 句話描述此元件的主要責任]
@@ -63,9 +75,9 @@
 
 ---
 
-## 2. Props 介面定義 (Props Interface)
+## 4. Props 介面定義 (Props Interface)
 
-### 2.1 Props 定義
+### 4.1 Props 定義
 
 **TypeScript 介面：**
 ```typescript
@@ -87,7 +99,7 @@ interface ComponentProps {
 
 ---
 
-### 2.2 Props 說明
+### 4.2 Props 說明
 
 | Prop 名稱 | 類型 | 必需 | 預設值 | 說明 |
 |----------|------|------|--------|------|
@@ -98,7 +110,7 @@ interface ComponentProps {
 
 ---
 
-### 2.3 預設值
+### 4.3 預設值
 
 ```typescript
 const defaultProps = {
@@ -109,9 +121,9 @@ const defaultProps = {
 
 ---
 
-## 3. 元件結構 (Component Structure)
+## 5. 元件結構 (Component Structure)
 
-### 3.1 HTML/JSX 結構
+### 5.1 HTML/JSX 結構
 
 **結構說明：**
 [待補充：描述元件的 DOM 結構層次]
@@ -138,7 +150,35 @@ const ComponentName = ({ prop1, prop2, prop3 }) => {
 
 ---
 
-### 3.2 樣式實作
+### 5.2 關鍵 DOM 結構
+
+**DOM 節點說明：**
+- [待補充：列出元件中的關鍵 DOM 元素及其用途]
+
+**選取器清單：**
+| 選取器 | 元素類型 | 用途 | 備註 |
+|--------|----------|------|------|
+| `.container` | div | 最外層容器 | 控制版面 |
+| `#unique-id` | [類型] | [用途] | [備註] |
+
+**DOM 結構圖：**
+```
+[待補充：純文字樹狀結構]
+component-root
+  ├── .header
+  │   ├── .title
+  │   └── .actions
+  ├── .body
+  │   └── .content
+  └── .footer
+```
+
+**DOM 操作邏輯：**
+- [待補充：元件如何透過 refs 或選取器操作 DOM]
+
+---
+
+### 5.3 樣式實作
 
 **樣式方案：**
 - [ ] CSS Modules - `ComponentName.module.css`
@@ -160,7 +200,7 @@ const ComponentName = ({ prop1, prop2, prop3 }) => {
 
 ---
 
-### 3.3 互動行為
+### 5.4 互動行為
 
 **互動流程：**
 1. **使用者操作**：[待補充]
@@ -184,9 +224,9 @@ sequenceDiagram
 
 ---
 
-## 4. 狀態與生命週期 (State & Lifecycle)
+## 6. 狀態與生命週期 (State & Lifecycle)
 
-### 4.1 內部狀態
+### 6.1 內部狀態
 
 **狀態變數：**
 ```typescript
@@ -209,7 +249,7 @@ graph LR
 
 ---
 
-### 4.2 生命週期 / 副作用
+### 6.2 生命週期 / 副作用
 
 **useEffect / Hooks：**
 ```typescript
@@ -229,21 +269,9 @@ useEffect(() => {
 
 ---
 
-## 5. 📦 依賴關係 (Dependencies)
+## 7. 使用範例 (Usage Examples)
 
-| 類型 | 名稱 | 用途 | 檔案連結 |
-|------|------|------|----------|
-| Component | [子元件名稱] | [元件用途] | [分析文件連結] |
-| Hook | [Hook名稱] | [Hook用途] | [分析文件連結] |
-| Helper | [工具名稱] | [工具用途] | [分析文件連結] |
-
-**說明：** 此表格追蹤本元件依賴的所有外部元件、Hooks 與工具。
-
----
-
-## 6. 使用範例 (Usage Examples)
-
-### 6.1 基本用法
+### 7.1 基本用法
 
 ```jsx
 import ComponentName from './components/ComponentName';
@@ -260,7 +288,7 @@ const App = () => {
 
 ---
 
-### 6.2 進階用法
+### 7.2 進階用法
 
 ```jsx
 // [待補充：進階使用範例，例如：組合多個 Props、自訂樣式]
@@ -276,7 +304,7 @@ const App = () => {
 
 ---
 
-### 6.3 組合範例
+### 7.3 組合範例
 
 ```jsx
 // [待補充：與其他元件組合使用的範例]
@@ -288,9 +316,9 @@ const App = () => {
 
 ---
 
-## 7. 架構與品質分析 (Architecture & Quality Analysis)
+## 8. 架構與品質分析 (Architecture & Quality Analysis)
 
-### 7.1 可重用性評估
+### 8.1 可重用性評估
 
 **可重用性分析：**
 - **當前使用次數**：[待補充：在幾個地方使用]
@@ -302,7 +330,7 @@ const App = () => {
 
 ---
 
-### 7.2 可訪問性 (Accessibility)
+### 8.2 可訪問性 (Accessibility)
 
 **a11y 檢查清單：**
 - [ ] 語義化 HTML 標籤（使用 `<button>` 而非 `<div>`）
@@ -317,7 +345,7 @@ const App = () => {
 
 ---
 
-### 7.3 效能優化
+### 8.3 效能優化
 
 **效能檢查清單：**
 - [ ] 使用 React.memo 避免不必要的重渲染
@@ -330,7 +358,7 @@ const App = () => {
 
 ---
 
-### 7.4 測試覆蓋
+### 8.4 測試覆蓋
 
 **測試策略：**
 - [ ] 單元測試（Jest）
@@ -349,7 +377,7 @@ describe('ComponentName', () => {
 
 ---
 
-## 8. 📋 品質檢查清單 (Quality Checklist)
+## 9. 📋 品質檢查清單 (Quality Checklist)
 
 ### ⭐ 基礎框架 (1-40%)
 - [ ] 文件元數據完整（日期、品質等級）
