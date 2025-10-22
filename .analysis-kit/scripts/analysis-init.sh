@@ -11,34 +11,32 @@ source "$SCRIPT_DIR/common.sh"
 
 # --- Parse Arguments ---
 JSON_MODE=false
+TOPIC_SLUG=""
+TOPIC_TITLE=""
+
 ARGS=()
 for arg in "$@"; do
     case "$arg" in
         --json) JSON_MODE=true ;;
-        --help|-h) 
-            echo "Usage: $0 [--json] <topic_name>"
-            echo "Example: $0 \"會員管理功能\""
+        --help|-h)
+            echo "Usage: $0 [--json] <topic_slug> [\"<topic_title>\"]"
+            echo "Example: $0 trades-order-detail \"訂單明細\""
             echo "Options:"
             echo "  --json    Output result in JSON format"
-            exit 0 
+            exit 0
             ;;
         *) ARGS+=("$arg") ;;
     esac
 done
 
-TOPIC_NAME="${ARGS[*]}"
-
-# Parse JSON if the input looks like JSON
-if [[ "$TOPIC_NAME" =~ ^\{.*\}$ ]]; then
-    # Extract topic_name from JSON using grep and sed
-    TOPIC_NAME=$(echo "$TOPIC_NAME" | grep -o '"topic_name"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/"topic_name"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
-fi
-
-if [ -z "$TOPIC_NAME" ]; then
-    log_error "Usage: $0 [--json] <topic_name>" >&2
-    log_error "Example: $0 \"會員管理功能\"" >&2
+if [ ${#ARGS[@]} -lt 1 ]; then
+    log_error "Usage: $0 [--json] <topic_slug> [\"<topic_title>\"]" >&2
+    log_error "Example: $0 trades-order-detail \"訂單明細\"" >&2
     exit 1
 fi
+
+TOPIC_SLUG="${ARGS[0]}"
+TOPIC_TITLE="${ARGS[1]:-$TOPIC_SLUG}" # Default title to slug if not provided
 
 # --- Validate Requirements ---
 if ! validate_requirements; then
@@ -55,10 +53,10 @@ if [[ ! -d "$SHARED_DIR" ]]; then
 fi
 
 # --- Create Topic Environment ---
-log_info "Initializing Topic environment for '$TOPIC_NAME'..."
+log_info "Initializing Topic environment for '$TOPIC_SLUG' ($TOPIC_TITLE)..."
 
 # Use the enhanced feature creation utilities
-RESULT=$(create_feature_environment "analysis" "$TOPIC_NAME" "$ANALYSIS_BASE_DIR" "")
+RESULT=$(create_feature_environment "analysis" "$TOPIC_SLUG" "$ANALYSIS_BASE_DIR" "")
 
 # Extract results
 eval "$RESULT"
@@ -79,7 +77,7 @@ SERVER_TEMPLATE="$TEMPLATES_DIR/server-template.md"
 if [[ -f "$SERVER_TEMPLATE" ]]; then
     cp "$SERVER_TEMPLATE" "$FEATURE_DIR/server.md"
     sed -i.bak \
-        -e "s/__TOPIC_NAME__/$TOPIC_NAME/g" \
+        -e "s/__TOPIC_NAME__/$TOPIC_TITLE/g" \
         -e "s/__CURRENT_DATE__/$CURRENT_DATE/g" \
         "$FEATURE_DIR/server.md"
     rm -f "$FEATURE_DIR/server.md.bak"
@@ -93,7 +91,7 @@ CLIENT_TEMPLATE="$TEMPLATES_DIR/client-template.md"
 if [[ -f "$CLIENT_TEMPLATE" ]]; then
     cp "$CLIENT_TEMPLATE" "$FEATURE_DIR/client.md"
     sed -i.bak \
-        -e "s/__TOPIC_NAME__/$TOPIC_NAME/g" \
+        -e "s/__TOPIC_NAME__/$TOPIC_TITLE/g" \
         -e "s/__CURRENT_DATE__/$CURRENT_DATE/g" \
         "$FEATURE_DIR/client.md"
     rm -f "$FEATURE_DIR/client.md.bak"
@@ -111,7 +109,7 @@ if [[ -f "$OVERVIEW_TEMPLATE" ]]; then
     
     # Update template placeholders
     sed -i.bak \
-        -e "s/__TOPIC_NAME__/$TOPIC_NAME/g" \
+        -e "s/__TOPIC_NAME__/$TOPIC_TITLE/g" \
         -e "s/__CURRENT_DATE__/$CURRENT_DATE/g" \
         "$OVERVIEW_FILE"
     rm -f "${OVERVIEW_FILE}.bak"
@@ -132,7 +130,7 @@ else
     log_warning "Overview template not found: $OVERVIEW_TEMPLATE"
 fi
 
-log_success "Successfully initialized Topic environment for '$TOPIC_NAME'."
+log_success "Successfully initialized Topic environment for '$TOPIC_SLUG'."
 log_info "Next step: Use /analysis.create <type> [source-files...] to create analysis files."
 
 # --- Output Results ---
@@ -141,7 +139,7 @@ if $JSON_MODE; then
            "$BRANCH_NAME" "$FEATURE_DIR" "$DIR_NAME"
 else
     echo ""
-    echo "Topic environment for '$TOPIC_NAME' is ready:"
+    echo "Topic environment for '$TOPIC_SLUG' ('$TOPIC_TITLE') is ready:"
     echo "  Branch: $BRANCH_NAME"
     echo "  Directory: $FEATURE_DIR"
     echo "  Files:"
