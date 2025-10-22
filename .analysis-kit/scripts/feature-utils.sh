@@ -63,8 +63,7 @@ format_number() {
 # Usage: sanitize_name "My Feature Description"
 sanitize_name() {
     local description="$1"
-    echo "$description" | tr '[:upper:]' '[:lower:]' \
-                        | sed 's/[^a-z0-9]/-/g' \
+    echo "$description" | sed 's/[^[:alnum:]-]/-/g' \
                         | sed 's/-\+/-/g' \
                         | sed 's/^-//' \
                         | sed 's/-$//'
