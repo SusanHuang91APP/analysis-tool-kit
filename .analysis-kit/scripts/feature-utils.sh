@@ -63,10 +63,7 @@ format_number() {
 # Usage: sanitize_name "My Feature Description"
 sanitize_name() {
     local description="$1"
-    echo "$description" | sed 's/[^[:alnum:]-]/-/g' \
-                        | sed 's/-\+/-/g' \
-                        | sed 's/^-//' \
-                        | sed 's/-$//'
+    echo "$description" | perl -pe 's/[^[:alnum:]-]+/-/g; s/--+/-/g; s/^-|-$//g'
 }
 
 # Creates a branch name from description with automatic numbering
