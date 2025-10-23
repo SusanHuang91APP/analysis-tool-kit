@@ -11,6 +11,7 @@
 ├── analysis-init.sh          # 初始化 Topic 環境
 ├── analysis-create.sh        # 建立分析檔案
 ├── analysis-analyze.sh       # 深度分析更新
+├── analysis-deps.sh          # 更新依賴關係
 └── analysis-paths.sh         # 路徑除錯工具
 ```
 
@@ -183,7 +184,29 @@ eval "$RESULT"
 
 ---
 
-### 6. analysis-paths.sh
+### 6. analysis-deps.sh
+**對應指令：** `/analysis.deps [target.md] [source-files...]`
+
+**功能：**
+1. **更新依賴關係**：分析指定的 `.md` 檔案所關聯的原始碼，並自動更新其「依賴關係」區塊。
+2. **批次模式**：如果未提供 `target.md`，則會掃描 `overview.md` 並處理所有列出的檔案。
+3. **新增原始碼關聯**：如果提供了 `source-files`，會先將其添加到 `.md` 檔案的「分析檔案資訊」區塊，然後再進行分析。
+
+**執行範例：**
+```bash
+# 更新單一檔案的依賴
+./analysis-deps.sh "features/001-會員註冊.md"
+
+# 批次更新所有檔案的依賴
+./analysis-deps.sh
+
+# 將新原始碼加入關聯並更新依賴
+./analysis-deps.sh "features/001-會員註冊.md" "new-source.ts"
+```
+
+---
+
+### 7. analysis-paths.sh
 **性質：** 除錯工具
 
 **功能：**

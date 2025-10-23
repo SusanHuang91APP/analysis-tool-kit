@@ -31,6 +31,7 @@ Analysis Tool Kit V2 是一個專為程式碼分析和架構文檔生成設計�
 │   ├── analysis-init.sh         # 初始化 Topic 環境
 │   ├── analysis-create.sh       # 建立分析檔案
 │   ├── analysis-analyze.sh      # 深度分析更新
+│   ├── analysis-deps.sh         # 更新依賴關係
 │   └── analysis-paths.sh        # 路徑除錯工具
 └── templates/                   # 分析範本（8 個）
     ├── overview-template.md     # 追蹤清單範本
@@ -181,7 +182,8 @@ analysis/
 #### 指令驅動腳本
 - **`analysis-init.sh`** - 初始化 Topic 環境（對應 `/analysis.init`）
 - **`analysis-create.sh`** - 建立分析檔案（對應 `/analysis.create`）
-- **`analysis-analyze.sh`** - 深度分析更新（對應 `/analysis.analyze`）
+- **`analysis-analyze.sh`** - 深度分析更新（對應 `/analysis.analyze`），支援單檔或批次模式
+- **`analysis-deps.sh`** - 更新依賴關係（對應 `/analysis.deps`）
 
 #### 除錯工具
 - **`analysis-paths.sh`** - 顯示環境路徑和狀態

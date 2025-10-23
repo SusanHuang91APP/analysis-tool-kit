@@ -39,21 +39,62 @@ show_help() {
     echo "  $0 \"server.md\" Controllers/HomeController.cs"
 }
 
-# --- Parse Arguments ---
-if [[ "$1" == "--help" || "$1" == "-h" ]]; then
-    show_help
-    exit 0
-fi
+# --- Process a single analysis file ---
+# This function handles the analysis for one markdown file and its sources.
+process_analysis_file() {
+    local target_arg="$1"
+    shift
+    local source_files_arr=("$@")
 
-if [ "$#" -lt 1 ]; then
-    log_error "Error: Insufficient arguments." >&2
-    show_help >&2
-    exit 1
-fi
+    local target_file=""
+    local overview_file="$TOPIC_DIR/overview.md"
 
-TARGET_FILE_ARG="$1"
-shift
-SOURCE_FILES=("$@")
+    # --- Resolve Target File Path ---
+    local search_dirs=(
+        "$TOPIC_DIR"
+        "$TOPIC_DIR/features"
+        "$TOPIC_DIR/apis"
+        "$TOPIC_DIR/helpers"
+        "$TOPIC_DIR/request-pipeline"
+    )
+
+    for dir in "${search_dirs[@]}"; do
+        if [[ -f "$dir/$target_arg" ]]; then
+            target_file="$dir/$target_arg"
+            break
+        elif [[ -f "$dir/${target_arg}.md" ]]; then
+            target_file="$dir/${target_arg}.md"
+            break
+        fi
+    done
+
+    if [[ -z "$target_file" ]]; then
+        log_error "Target file not found: $target_arg" >&2
+        return 1
+    fi
+
+    log_success "Processing target file: $(basename "$target_file")"
+
+    # --- Validate Source Files ---
+    if [[ ${#source_files_arr[@]} -gt 0 ]]; then
+        for source_file in "${source_files_arr[@]}"; do
+            if [[ ! -f "$source_file" ]]; then
+                log_warning "Source file not found: $source_file"
+            fi
+        done
+    fi
+
+    # --- Prepare environment for AI ---
+    echo ""
+    echo "=== Environment Variables for AI: $(basename "$target_file") ==="
+    echo "TARGET_FILE='$target_file'"
+    echo "OVERVIEW_FILE='$overview_file'"
+    echo "CONSTITUTION_FILE='$CONSTITUTION_FILE'"
+    log_info "Source files: ${source_files_arr[*]}"
+    echo ""
+}
+
+# --- Main Logic ---
 
 # --- Prerequisites Check ---
 check_analysis_branch "$CURRENT_BRANCH" || exit 1
@@ -64,156 +105,78 @@ if [[ ! -d "$TOPIC_DIR" ]]; then
     exit 1
 fi
 
-# --- Resolve Target File Path ---
-# The target file might be:
-# 1. Relative to TOPIC_DIR (e.g., "features/001-login.md")
-# 2. In SHARED_DIR (e.g., "components/001-button.md")
-# 3. Just filename without extension (e.g., "server")
-
-TARGET_FILE_NAME=$(basename "$TARGET_FILE_ARG" .md)
-TARGET_FILE=""
-OVERVIEW_FILE="$TOPIC_DIR/overview.md"
-
-# Potential directories within the topic
-SEARCH_DIRS=(
-    "$TOPIC_DIR"
-    "$TOPIC_DIR/features"
-    "$TOPIC_DIR/apis"
-    "$TOPIC_DIR/helpers"
-    "$TOPIC_DIR/request-pipeline"
-)
-
-# Search for the target file
-for dir in "${SEARCH_DIRS[@]}"; do
-    if [[ -f "$dir/$TARGET_FILE_ARG" ]]; then
-        TARGET_FILE="$dir/$TARGET_FILE_ARG"
-        break
-    elif [[ -f "$dir/${TARGET_FILE_ARG}.md" ]]; then
-        TARGET_FILE="$dir/${TARGET_FILE_ARG}.md"
-        break
+# --- Mode Selection: Batch or Single ---
+if [ "$#" -eq 0 ]; then
+    # --- Batch Mode ---
+    log_info "Mode: Batch. Processing all files from $TOPIC_DIR/overview.md."
+    OVERVIEW_FILE="$TOPIC_DIR/overview.md"
+    if [[ ! -f "$OVERVIEW_FILE" ]]; then
+        log_error "Overview file not found: $OVERVIEW_FILE" >&2
+        exit 1
     fi
-done
 
-if [[ -z "$TARGET_FILE" ]]; then
-    log_error "Target file not found: $TARGET_FILE_ARG" >&2
-    log_error "Searched in:" >&2
-    for dir in "${SEARCH_DIRS[@]}"; do
-        log_error "  - $dir" >&2
-    done
-    exit 1
-fi
+    # Extract relative paths from overview.md, e.g., (./features/001-login.md)
+    RELATIVE_PATHS=()
+    while IFS= read -r path; do
+        RELATIVE_PATHS+=("$path")
+    done < <(grep -o '(\./[^)]*\.md)' "$OVERVIEW_FILE" | sed 's/[()]/''/g; s|^\./||')
 
-log_success "Found target file: $TARGET_FILE"
-
-# --- Determine Overview File ---
-if [[ ! -f "$OVERVIEW_FILE" ]]; then
-    log_error "Overview file not found: $OVERVIEW_FILE" >&2
-    exit 1
-fi
-
-# --- Validate Source Files ---
-if [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
-    for source_file in "${SOURCE_FILES[@]}"; do
-        if [[ ! -f "$source_file" ]]; then
-            log_warning "Source file not found: $source_file"
+    for rel_path in "${RELATIVE_PATHS[@]}"; do
+        md_file="$TOPIC_DIR/$rel_path"
+        if [[ ! -f "$md_file" ]]; then
+            log_warning "File from overview.md not found: $md_file. Skipping."
+            continue
         fi
+
+        log_info "--------------------------------------------------"
+        log_info "Batch processing: $(basename "$md_file")"
+
+        # Extract source code files from the markdown itself
+        SOURCE_CODE_FILES_FROM_MD=()
+        in_section=false
+        while IFS= read -r line; do
+            if [[ "$line" =~ ^"### 1.1 📂 分析檔案資訊" ]]; then
+                in_section=true
+                continue
+            fi
+            if $in_section && [[ "$line" =~ ^"###" ]]; then
+                break
+            fi
+            if $in_section; then
+                if [[ "$line" =~ \|([^|]+)\| ]]; then
+                    path_candidate=$(echo "${BASH_REMATCH[1]}" | xargs)
+                    if [[ "$path_candidate" =~ \. ]]; then
+                        if [[ -f "$REPO_ROOT/$path_candidate" ]]; then
+                             SOURCE_CODE_FILES_FROM_MD+=("$REPO_ROOT/$path_candidate")
+                        elif [[ -f "$path_candidate" ]]; then
+                            SOURCE_CODE_FILES_FROM_MD+=("$path_candidate")
+                        fi
+                    fi
+                fi
+            fi
+        done < "$md_file"
+
+        if [[ ${#SOURCE_CODE_FILES_FROM_MD[@]} -eq 0 ]]; then
+            log_warning "No source files found in $md_file. Analyzing without source."
+        fi
+
+        process_analysis_file "$(basename "$md_file")" "${SOURCE_CODE_FILES_FROM_MD[@]}"
     done
+
+else
+    # --- Single File Mode ---
+    log_info "Mode: Single file."
+    TARGET_FILE_ARG="$1"
+    shift
+    SOURCE_FILES=("$@")
+    process_analysis_file "$TARGET_FILE_ARG" "${SOURCE_FILES[@]}"
 fi
 
-# --- Categorize Files by Type ---
-VIEW_FILES=()
-CONTROLLER_FILES=()
-SERVICE_FILES=()
-UTILITY_FILES=()
-OTHER_FILES=()
-
-for file_path in "${SOURCE_FILES[@]}"; do
-    case "${file_path##*.}" in
-        cshtml|html)
-            VIEW_FILES+=("$file_path")
-            ;;
-        cs)
-            if [[ $file_path == *Controller.cs ]]; then
-                CONTROLLER_FILES+=("$file_path")
-            elif [[ $file_path == *Service.cs ]]; then
-                SERVICE_FILES+=("$file_path")
-            else
-                OTHER_FILES+=("$file_path")
-            fi
-            ;;
-        ts|tsx|js|jsx)
-            if [[ $file_path == *Controller.ts || $file_path == *Controller.tsx ]]; then
-                CONTROLLER_FILES+=("$file_path")
-            elif [[ $file_path == *Service.ts || $file_path == *Service.tsx ]]; then
-                SERVICE_FILES+=("$file_path")
-            elif [[ $file_path == */api/* || $file_path == */routes/* ]]; then
-                CONTROLLER_FILES+=("$file_path")  # API routes treated as controllers
-            else
-                OTHER_FILES+=("$file_path")
-            fi
-            ;;
-        vue)
-            COMPONENT_FILES+=("$file_path")
-            ;;
-        *)
-            OTHER_FILES+=("$file_path")
-            ;;
-    esac
-done
-
-# --- Environment Validation Passed ---
-log_success "Environment validation passed"
-log_info "Target file: $(basename "$TARGET_FILE")"
-log_info "Overview file: $(basename "$OVERVIEW_FILE")"
-
-if [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
-    log_info ""
-    log_info "Source files categorized:"
-    [[ ${#VIEW_FILES[@]} -gt 0 ]] && log_info "  Views: ${VIEW_FILES[*]}"
-    [[ ${#CONTROLLER_FILES[@]} -gt 0 ]] && log_info "  Controllers: ${CONTROLLER_FILES[*]}"
-    [[ ${#SERVICE_FILES[@]} -gt 0 ]] && log_info "  Services: ${SERVICE_FILES[*]}"
-    [[ ${#UTILITY_FILES[@]} -gt 0 ]] && log_info "  Utilities: ${UTILITY_FILES[*]}"
-    [[ ${#OTHER_FILES[@]} -gt 0 ]] && log_info "  Other: ${OTHER_FILES[*]}"
-fi
-
-log_info ""
+log_info "=================================================="
+log_success "Script finished. Handing over to AI for analysis."
 log_info "AI should now:"
-log_info "  1. Read constitution.md for analysis rules"
-log_info "  2. Analyze source files and update $TARGET_FILE"
-log_info "  3. Fill [待補充] placeholders with concrete content"
-log_info "  4. Add Mermaid diagrams, code snippets, and explanations"
-log_info "  5. Update quality checklist at the end of the file"
-log_info ""
-log_info "After AI completes analysis, this script will:"
-log_info "  - Calculate quality level based on checklist completion"
-log_info "  - Update overview.md with new quality level"
-
-# --- Store paths for AI to use ---
-echo ""
-echo "=== Environment Variables for AI ==="
-echo "TARGET_FILE='$TARGET_FILE'"
-echo "OVERVIEW_FILE='$OVERVIEW_FILE'"
-echo "CONSTITUTION_FILE='$CONSTITUTION_FILE'"
-echo ""
-
-# Note: Quality calculation will be done AFTER AI updates the file
-# The AI should update the file content and check items in the quality checklist
-# Then we can run this script again or have AI call a separate function to:
-#   1. Count checked items in quality checklist
-#   2. Calculate percentage
-#   3. Determine quality level
-#   4. Update overview.md
-
-log_info "=== Post-Analysis Tasks (to be done after AI updates) ==="
-log_info "After AI completes the analysis:"
-log_info ""
-log_info "# Calculate quality level"
-log_info "PERCENTAGE=\$(count_checked_items '$TARGET_FILE')"
-log_info "QUALITY_LEVEL=\$(calculate_quality_level \$PERCENTAGE)"
-log_info ""
-log_info "# Update overview.md"
-log_info "update_quality_level '$OVERVIEW_FILE' '$(basename "$TARGET_FILE")' \"\$QUALITY_LEVEL\""
-log_info ""
-log_info "# Report results"
-log_info "echo \"Quality level updated: \$QUALITY_LEVEL (\${PERCENTAGE}% complete)\""
+log_info "  1. Read constitution.md for analysis rules."
+log_info "  2. Analyze source files and update the target .md file(s)."
+log_info "  3. Update the quality checklist within each .md file."
+log_info "  4. AI will then need to calculate and update the quality level in overview.md."
 
