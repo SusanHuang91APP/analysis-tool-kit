@@ -85,7 +85,9 @@ flowchart TD
     - ✅ `overview.md` 已建立（空的檔案清單表格）
     - ✅ `features/` 空目錄已建立
     - ✅ `apis/` 空目錄已建立
-    - ✅ `analysis/shared/` 結構已建立（首次執行時）
+    - ✅ `components/` 空目錄已建立
+    - ✅ `helpers/` 空目錄已建立
+    - ✅ `request-pipeline/` 空目錄已建立
 
 ### Phase 1: 確認環境無需 AI 介入 (Verification Only)
 
@@ -105,18 +107,14 @@ flowchart TD
      - `overview.md` (追蹤檔案清單，空的表格)
      - `features/` (功能分析目錄)
      - `apis/` (API 分析目錄)
-   - ✅ Shared 結構已確保存在：
-     - `analysis/shared/overview.md`
-     - `analysis/shared/request-pipeline/`
-     - `analysis/shared/components/`
-     - `analysis/shared/helpers/`
+     - `components/` (元件分析目錄)
+     - `helpers/` (輔助函式分析目錄)
+     - `request-pipeline/` (請求管線分析目錄)
 
 2. **建議下一步**:
 
    - 🔜 使用 `/analysis.create <type> [source-files...]` 來建立具體的分析檔案
-   - 📝 可用類型：
-     - **Topic 類型**: `server`, `client`, `feature`, `api`
-     - **Shared 類型**: `request-pipeline`, `component`, `helper`
+   - 📝 可用類型：`server`, `client`, `feature`, `api`, `request-pipeline`, `component`, `helper`
 
 ---
 
@@ -130,9 +128,7 @@ flowchart TD
 
 - **規則 3**: 腳本會自動檢查 Git 未提交變更，若有衝突會中斷，AI 應回報錯誤訊息給使用者。
 
-- **規則 4**: 首次執行時，腳本會自動建立 `analysis/shared/` 完整結構。
-
-- **規則 5**: Topic 編號 `###` 由腳本自動計算，掃描現有 `analysis/` 目錄決定。
+- **規則 4**: Topic 編號 `###` 由腳本自動計算，掃描現有 `analysis/` 目錄決定。
 
 ---
 
@@ -155,15 +151,13 @@ flowchart TD
 
 ```
 analysis/
-├── shared/                          # 全域共用分析（首次建立）
-│   ├── overview.md
-│   ├── request-pipeline/
-│   ├── components/
-│   └── helpers/
 └── 001-會員管理功能/              # 新建立的 Topic
     ├── overview.md                  # 追蹤清單（空的表格）
     ├── features/                    # 功能分析（空）
-    └── apis/                        # API 分析（空）
+    ├── apis/                        # API 分析（空）
+    ├── components/                  # 元件分析（空）
+    ├── helpers/                     # 輔助函式分析（空）
+    └── request-pipeline/            # 請求管線分析（空）
 ```
 
 ---

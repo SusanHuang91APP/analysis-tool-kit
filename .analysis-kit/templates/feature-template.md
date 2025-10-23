@@ -33,360 +33,242 @@
 
 **此文件的分析目標：**
 
-本文件用於分析**跨前後端的完整功能流程**，重點在於：
+本文件用於分析**前端功能區塊 (Feature) 的 UI 與業務邏輯**，重點在於：
 
-1. **端到端流程**：從使用者操作到後端處理再到 UI 回饋的完整鏈路
-2. **前後端協作**：分析前端頁面/元件如何調用後端 API，資料如何流轉
-3. **業務價值**：說明此功能解決什麼問題，為業務/使用者帶來什麼價值
-4. **依賴拓撲**：梳理涉及的所有前後端檔案，建立完整的依賴關係圖
-5. **整合測試**：規劃正常/異常/邊界的測試場景
+1. **UI 結構**：記錄元件的 HTML/JSX 結構、關鍵 DOM 元素與樣式。
+2. **互動流程**：分析使用者操作如何觸發事件、更新狀態、與後端 API 互動。
+3. **業務邏輯**：深入分析 Controller 中的核心業務邏輯與條件判斷。
+4. **資料流**：梳理 State、Props、Service 資料的完整流向。
+5. **依賴追蹤**：追蹤所有使用的 Component、Service、API 並建立依賴關係表。
 
 **AI Agent 注意事項：**
-- 此為功能級分析，範圍大於單一 API 或元件，需要宏觀視角
-- 必須繪製系統互動序列圖，展示前端 UI → API → Service → DB 的完整流程
-- 必須分析資料在前後端之間的轉換邏輯（DTO 映射）
-- 所有涉及的檔案都必須列在「分析檔案資訊」和「依賴關係表」中
-- 重點關注邊界情況和異常處理流程
+- 此為前端功能級分析，通常對應一個頁面中的某個特定功能區塊。
+- 必須用序列圖清楚展示使用者操作 → View → Controller → Service 的完整互動流程。
+- 所有依賴的元件/服務/API 都必須記錄到依賴關係表，並確認是否已建立分析檔案。
+- 狀態變數 (`State`) 和傳入屬性 (`Props`) 必須詳細說明用途。
+- 條件式渲染 (`Conditional Rendering`) 邏輯需要被分析，以了解 UI 如何根據狀態變化。
+- 必須附上關鍵的程式碼片段，例如事件處理函式、服務調用、和核心業務邏輯。
 
 ---
 
-## 3. 功能概覽 (Feature Overview)
+## 3. 介面與互動分析 (UI & Interaction Analysis)
+*此區塊專注於從使用者視角分析 UI 的組成與互動行為。*
 
-### 3.1 功能描述
+### 3.1 元件結構 (Component Structure)
+> **Phase 1**: 自動填充外層容器（HTML/Component 最外層元素）  
+> **Phase 2**: 補充詳細的內部結構分析和關鍵 DOM 元素說明
 
-**功能摘要：**
-[待補充：用 2-3 句話描述此功能的核心價值]
+[Phase 1 已填充：此功能區塊的外層容器]
 
-**業務價值：**
-- [待補充：此功能解決了什麼問題]
-- [待補充：為使用者/業務帶來什麼價值]
-
----
-
-## 4. 完整流程分析 (Complete Flow Analysis)
-
-### 4.1 使用者操作流程
-
-**操作步驟：**
-1. **步驟1**：使用者進入頁面
-2. **步驟2**：查看/輸入資料
-3. **步驟3**：觸發操作（例如：點擊提交）
-4. **步驟4**：系統處理請求
-5. **步驟5**：顯示結果回饋
-
-**完整流程圖：**
-```mermaid
-graph TD
-    A[使用者進入] --> B[頁面載入]
-    B --> C[顯示表單]
-    C --> D{使用者操作}
-    D -->|填寫| E[輸入資料]
-    D -->|取消| F[返回上頁]
-    E --> G[驗證輸入]
-    G -->|通過| H[提交 API]
-    G -->|失敗| I[顯示錯誤]
-    H --> J[後端處理]
-    J --> K{處理結果}
-    K -->|成功| L[更新 UI]
-    K -->|失敗| M[錯誤提示]
-    L --> N[完成]
-    I --> E
-    M --> E
+**外層容器**：
+```html
+<!-- [Phase 1 已自動填充：此功能區塊的最外層 HTML 元素] -->
 ```
 
----
+[Phase 2 待補充：詳細的內部結構分析]
 
-### 4.2 系統互動序列
+**關鍵 DOM 元素**：
+```html
+<!-- [Phase 2 待補充：此區塊內的重要 HTML 結構片段] -->
+```
 
-**端到端互動：**
+### 3.2 互動流程 (Interaction Flow)
+[待補充：簡述此區塊的主要使用者互動流程，例如用戶點擊按鈕後觸發的事件鏈。]
+
 ```mermaid
 sequenceDiagram
-    participant User as 使用者
-    participant UI as 前端 UI
-    participant API as API 層
-    participant Service as 業務層
-    participant DB as 資料庫
-    
-    User->>UI: 觸發操作
-    UI->>UI: 前端驗證
-    UI->>API: HTTP 請求
-    API->>API: 授權檢查
-    API->>Service: 調用業務邏輯
-    Service->>DB: 查詢/更新資料
-    DB-->>Service: 返回結果
-    Service->>Service: 資料處理
-    Service-->>API: 處理結果
-    API-->>UI: JSON 回應
-    UI->>UI: 更新狀態
-    UI-->>User: 顯示結果
+participant User
+participant View as [View 元件]
+participant Controller
+participant Service as [依賴服務/API]
+
+User->>View: [執行操作，例如：點擊 '儲存' 按鈕]
+View->>Controller: 呼叫 [事件處理函式，例如：saveChanges()]
+Controller->>Service: 呼叫 [Service 方法，例如：updateOrder()]
+Service-->>Controller: [回傳 Promise/結果]
+Controller-->>View: [更新狀態 (e.g., this.isLoading = false)，View 重新渲染]
 ```
 
----
-
-### 4.3 邊界情況與異常處理
-
-**邊界情況：**
-1. **情況1**：[描述] → [處理方式]
-2. **情況2**：[描述] → [處理方式]
-
-**異常處理流程：**
+### 3.3 條件式渲染邏輯 (Conditional Rendering)
+[待補充：分析此區塊的渲染複雜度。條件過多可能意味著元件職責不清。] 
 ```mermaid
 graph TD
-    A[發生錯誤] --> B{錯誤類型}
-    B -->|驗證錯誤| C[顯示欄位錯誤]
-    B -->|授權錯誤| D[導向登入頁]
-    B -->|業務錯誤| E[顯示錯誤訊息]
-    B -->|系統錯誤| F[顯示通用錯誤]
-    C --> G[使用者修正]
-    E --> G
-    F --> H[記錄日誌]
+A{[主要判斷條件]}
+A -- Yes --> B[顯示];
+A -- No --> C[隱藏];
 ```
 
 ---
 
-## 5. 前端實作分析 (Frontend Implementation)
+## 4. 實作細節分析 (Implementation Detail Analysis)
+*此區塊專注於深入程式碼，分析該功能的具體實現方式。*
 
-### 5.1 涉及的頁面/元件
+### 4.1 對應 Controller 方法 (Corresponding Controller Methods)
+> **Phase 2**: 補充完整的 Controller 方法分析
 
-**主要頁面：**
-- `PageName` - [待補充：頁面路徑] - [分析文件連結]
-
-**使用的元件：**
-- `Component1` - [待補充：元件用途] - [分析文件連結]
-- `Component2` - [待補充：元件用途] - [分析文件連結]
-
----
-
-### 5.2 關鍵 DOM 結構
-
-**主要頁面的 DOM 架構：**
-- [待補充：列出頁面中的關鍵 DOM 元素]
-
-**重要 DOM 選取器：**
-| 選取器 | 用途 | 操作說明 |
-|--------|------|----------|
-| `#element-id` | [用途] | [JavaScript 如何操作] |
-| `.class-name` | [用途] | [事件綁定說明] |
-
-**DOM 層級關係：**
+* **程式碼片段**:
 ```
-[待補充：用純文字展示 DOM 樹狀結構]
+[待補充：貼上與此區塊功能最直接相關的 Controller/事件處理方法]
 ```
 
----
+* **說明**:
+    [待補充：描述此方法的核心職責、觸發時機以及它如何協調 View 和 Service。]
 
-### 5.3 前端路由
+### 4.2 核心業務邏輯 (Core Business Logic)
+* **程式碼片段**:
 
-**路由配置：**
-- **路徑**：`/path/to/page`
-- **參數**：`?param1=value&param2=value`
-- **守衛**：[待補充：路由守衛邏輯]
+    ```typescript
+    // [待補充：貼上最能體現此區塊業務規則的關鍵程式碼]
+    if (someCondition) {
+        this.someService.doSomething();
+    }
+    ```
+* **說明**:
+    [待補充：深入分析這段程式碼的執行細節與業務規則，解釋其「如何」實現功能，包含重要的條件判斷和商業邏輯。]
 
----
+### 4.3 資料流與狀態變數 (Data Flow & State Variables)
+* **資料流向**:
+    ```mermaid
+    graph TD
+        subgraph Controller
+            A[SalePageIndexController]
+        end
+        subgraph View
+            B["View Component (ng-repeat)"]
+        end
+        subgraph Service
+            C[SalePageService]
+        end
 
-### 5.4 前端狀態管理
+        C -- 提供資料 --> A
+        A -- this.orderList --> B
+    ```
+* **相關狀態變數**:
+    ```typescript
+    // [待補充：貼上此區塊在 Controller 中依賴的核心狀態變數]
+    public orderList: IOrder[] = [];
+    public isLoading: boolean = false;
+    public errorMessage: string | null = null;
+    ```
+* **說明**:
+    [待補充：解釋圖中的資料如何從 Service 流向 Controller 再到 View，並說明各個狀態變數在此區塊中的具體作用。]
 
-**狀態流向：**
-```mermaid
-graph LR
-    A[使用者輸入] --> B[Local State]
-    B --> C[驗證]
-    C --> D[Global State]
-    D --> E[API 請求]
-    E --> F[更新 State]
-    F --> G[UI 更新]
-```
+### 4.4 相依服務與工具 (Dependent Services/Utilities)
 
----
+#### 4.4.1 服務依賴註入
+* **程式碼片段**:
+    ```typescript
+    // [待補充：列出此區塊邏輯中呼叫到的主要依賴]
+    constructor(
+        public salePageService: Services.SalePageService,
+        public analyticsUtil: Utilities.AnalyticsUtility
+    )
+    ```
+* **說明**:
+    [待補充：說明此區塊的功能實現依賴了哪些外部 Service 或 Utility，以及它們各自提供了什麼能力。]
 
-## 6. 後端實作分析 (Backend Implementation)
+#### 4.4.2 API 端點與資料結構 (API Endpoints & Data Structures)
 
-### 6.1 涉及的 API 端點
+##### API 1: [API 名稱，例如：取得訂單列表]
+* **服務方法**:
+    ```typescript
+    // [待補充：Service 中對應的方法簽名]
+    public getList(params: IParams): Promise<IResponse> {
+        return this.$http.get('/api/list', { params });
+    }
+    ```
 
-**API 清單：**
-- `GET /api/resource` - [待補充：用途] - [分析文件連結]
-- `POST /api/resource` - [待補充：用途] - [分析文件連結]
+* **HTTP 請求**:
+    - **Method**: `GET` / `POST` / `PUT` / `DELETE`
+    - **Endpoint**: `/api/list`
+    - **Query Parameters** (如適用):
+        ```typescript
+        interface IParams {
+            ...
+        }
+        ```
 
----
+* **Request Payload** (如適用於 POST/PUT/PATCH):
+    ```typescript
+    // [待補充：如果是 POST/PUT/PATCH 請求，描述 request body 結構]
+    interface IRequest {
+        ...
+    }
+    ```
 
-### 6.2 Controller 層
+* **Response Payload**:
+    ```typescript
+    // [待補充：描述 API 回應的資料結構]
+    interface IResponse {
+        ...
+    }
 
-**Controller 方法：**
-- `ControllerName.MethodName` - [待補充：職責] - [分析文件連結]
+* **錯誤處理**:
+    ```typescript
+    // [待補充：描述錯誤處理邏輯]
+    try {
+        ...
+    } catch (error) {
+        if (error.status === 401) {
+            ...
+        } else if (error.status === 400) {
+            ...
+        } else {
+            ...
+        }
+    }
+    ```
+    常見錯誤碼：
+    - `400 Bad Request`: 參數格式錯誤或缺少必要參數
+    - `401 Unauthorized`: 未登入或 token 過期
+    - `403 Forbidden`: 無權限存取
+    - `404 Not Found`: 資源不存在
+    - `500 Internal Server Error`: 伺服器內部錯誤
 
----
+##### API 2: [其他 API 名稱]
+[待補充：如有多個 API 調用，請複製上方結構繼續描述]
 
-### 6.3 Service 層
+#### 4.4.3 非 API 依賴服務
+* **Utility/Helper 說明**:
+    ```typescript
+    // [待補充：描述不涉及 API 調用的工具類依賴]
+    // 例如：日期格式化工具、驗證工具、追蹤工具等
+    this.analyticsUtil.trackEvent('order_list_viewed', {
+        page: this.currentPage,
+        timestamp: Date.now()
+    });
+    ```
+* **說明**:
+    [待補充：說明這些工具類的用途和調用時機]
 
-**業務邏輯服務：**
-- `ServiceName.MethodName` - [待補充：業務邏輯] - [分析文件連結]
-
-**業務流程：**
-```mermaid
-graph TD
-    A[接收請求] --> B[參數驗證]
-    B --> C[業務規則檢查]
-    C --> D{通過檢查?}
-    D -->|是| E[執行業務邏輯]
-    D -->|否| F[返回錯誤]
-    E --> G[資料持久化]
-    G --> H[返回結果]
-```
-
----
-
-## 7. 資料流分析 (Data Flow Analysis)
-
-### 7.1 完整資料流向
-
-**資料流向圖：**
-```mermaid
-graph TD
-    A[使用者輸入] --> B[前端驗證]
-    B --> C[狀態更新]
-    C --> D[API 請求]
-    D --> E[後端驗證]
-    E --> F[業務處理]
-    F --> G[資料庫操作]
-    G --> H[回應組裝]
-    H --> I[前端接收]
-    I --> J[狀態更新]
-    J --> K[UI 渲染]
-```
-
----
-
-### 7.2 資料結構
-
-**前端資料模型：**
-```typescript
-interface FrontendModel {
-    // [待補充：前端資料結構]
-}
-```
-
-**後端資料模型：**
-```csharp
-public class BackendModel
-{
-    // [待補充：後端資料結構]
-}
-```
-
----
-
-### 7.3 資料轉換
-
-**轉換邏輯：**
-- **前端 → 後端**：[待補充：轉換說明]
-- **後端 → 前端**：[待補充：轉換說明]
-
----
-
-## 8. 整合測試場景 (Integration Test Scenarios)
-
-### 8.1 正常流程測試
-
-**測試案例：**
-1. **案例1**：[正常操作流程]
-   - 前置條件：[待補充]
-   - 執行步驟：[待補充]
-   - 預期結果：[待補充]
-
----
-
-### 8.2 異常流程測試
-
-**測試案例：**
-1. **案例1**：[異常處理流程]
-   - 觸發條件：[待補充]
-   - 預期行為：[待補充]
-
----
-
-### 8.3 邊界條件測試
-
-**測試案例：**
-1. **案例1**：[邊界情況]
-   - 測試條件：[待補充]
-   - 預期結果：[待補充]
+#### 4.4.4 外部追蹤與服務 (External Tracking & Services)
+[待補充：除了內部服務，此區塊是否還觸發了其他外部服務？例如：Google Analytics 事件、Adobe Analytics 追蹤、A/B 測試等。]
 
 ---
 
-## 9. 架構與品質分析 (Architecture & Quality Analysis)
+## 5. 📋 品質檢查清單 (Quality Checklist)
 
-### 9.1 效能考量
+### ⭐ 基礎框架級 (Foundation Level)
+- [ ] **1.1 📂 分析檔案資訊**：分析的檔案路徑已填寫。
+- [ ] **3.1 元件結構**：外層容器的 HTML 結構已填充。
+- [ ] **3.2 互動流程**：基本互動流程的文字描述已提供。
 
-**效能關鍵點：**
-- [待補充：識別效能瓶頸]
+### ⭐⭐ 核心邏輯級 (Core Logic Level)
+- [ ] **3.1 元件結構**：關鍵 DOM 元素的 HTML 程式碼片段已補充。
+- [ ] **3.2 互動流程**：完整的 Mermaid `sequenceDiagram` 已繪製。
+- [ ] **3.3 條件式渲染邏輯**：渲染邏輯的 Mermaid 圖與說明已提供。
 
-**優化建議：**
-- [待補充：具體優化方案]
+### ⭐⭐⭐ 整合分析級 (Integration Analysis Level)
+- [ ] **4.1 對應 Controller 方法**：Controller 方法的程式碼片段和說明已提供。
+- [ ] **4.2 核心業務邏輯**：核心業務邏輯的程式碼片段和說明已提供。
+- [ ] **4.3 資料流與狀態變數**：完整的 Mermaid `graph` 資料流向圖已繪製。
+- [ ] **4.3 資料流與狀態變數**：至少列出 3 個核心狀態變數及其說明。
 
----
-
-### 9.2 安全性評估
-
-**安全檢查清單：**
-- [ ] 輸入驗證（前端 + 後端）
-- [ ] 授權檢查
-- [ ] CSRF 防護
-- [ ] XSS 防護
-- [ ] 敏感資料加密
-
-**安全風險：**
-- [待補充：已識別的安全風險]
-
----
-
-## 9. 前端品質分析 (Frontend Quality Analysis)
-
-### 9.1 條件式渲染 (Conditional Rendering)
-[待補充：分析此功能的渲染複雜度。條件過多可能意味著元件職責不清。]
-```mermaid
-graph TD
-    A{[主要判斷條件]}
-    A -- Yes --> B[顯示];
-    A -- No --> C[隱藏];
-```
-
-### 9.2 CSS 樣式 (CSS Styles)
-`[待補充：主要的 class 選擇器]` - [描述此 class 的作用，是否遵循 BEM 等規範，是否有全域污染風險。]
-
-### 9.3 狀態管理策略 (State Management)
-[待補充：評估此功能的狀態管理方式。是局部狀態？還是與全域狀態耦合？是否符合專案規範？]
-
-### 9.4 可訪問性 (Accessibility / a11y)
-[待補充：評估此功能的無障礙設計。是否使用 aria-* 屬性？是否支援鍵盤操作？是否有足夠的色彩對比？]
-
-### 9.5 可重用性 (Reusability)
-[待補充：評估此功能的程式碼是否為一次性使用，還是被設計為可在多處重用的元件？是否有潛力被抽抽象成共用元件？]
-
----
-
-## 10. 📋 品質檢查清單 (Quality Checklist)
-
-### ⭐ 基礎框架 (1-40%)
-- [ ] 文件元數據完整（日期、品質等級）
-- [ ] 功能描述完整
-- [ ] 使用者故事已定義
-
-### ⭐⭐⭐ 邏輯完成 (41-70%)
-- [ ] 完整流程圖已繪製
-- [ ] 系統互動序列圖已繪製
-- [ ] 前端實作已分析
-- [ ] 後端實作已分析
-
-### ⭐⭐⭐⭐ 架構完整 (71-90%)
-- [ ] **依賴關係表已完成**
-- [ ] **所有依賴項都已建立分析檔案**
-- [ ] 資料流分析完整
-- [ ] 測試場景已規劃
-
-### ⭐⭐⭐⭐⭐ 完整分析 (91-100%)
-- [ ] 效能優化建議具體
-- [ ] 安全性評估完整
-- [ ] 改善方案明確
+### ⭐⭐⭐⭐ 架構品質級 (Architecture Quality Level)
+- [ ] **1.2 📦 依賴關係**：依賴關係表已完整填寫，且相關檔案連結已建立。
+- [ ] **4.4.1 服務依賴註入**：所有依賴注入的服務及其用途已說明。
+- [ ] **4.4.2 API 端點與資料結構**：所有調用的 API 端點規格（請求/回應）已詳細描述。
+- [ ] **4.4.4 外部追蹤與服務**：外部追蹤與服務的分析已完成。
 
 ---
 

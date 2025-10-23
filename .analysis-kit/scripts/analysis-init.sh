@@ -47,10 +47,7 @@ fi
 eval $(get_analysis_paths)
 
 # --- Create Shared Structure (First Time) ---
-if [[ ! -d "$SHARED_DIR" ]]; then
-    log_info "First-time initialization: Creating shared/ structure..."
-    ensure_shared_structure "$SHARED_DIR" "$TEMPLATES_DIR"
-fi
+# No longer needed, topic structure is self-contained
 
 # --- Create Topic Environment ---
 log_info "Initializing Topic environment for '$TOPIC_SLUG' ($TOPIC_TITLE)..."
@@ -64,9 +61,8 @@ eval "$RESULT"
 # --- Create Topic Structure ---
 log_info "Setting up Topic structure..."
 
-# Create subdirectories
-mkdir -p "$FEATURE_DIR/features"
-mkdir -p "$FEATURE_DIR/apis"
+# Create subdirectories using common function
+ensure_topic_structure "$FEATURE_DIR"
 
 TOPIC_NUM=$(echo "$DIR_NAME" | grep -o '^[0-9]\+')
 TOPIC_NAME_SLUG=$(echo "$DIR_NAME" | sed 's/^[0-9]*-//')
@@ -107,11 +103,7 @@ else
     echo "    - overview.md (tracking manifest)"
     echo "    - features/ (empty)"
     echo "    - apis/ (empty)"
-    echo ""
-    echo "Shared structure:"
-    echo "  - $SHARED_DIR/overview.md"
-    echo "  - $SHARED_DIR/request-pipeline/"
-    echo "  - $SHARED_DIR/components/"
-    echo "  - $SHARED_DIR/helpers/"
+    echo "    - helpers/ (empty)"
+    echo "    - request-pipeline/ (empty)"
 fi
 

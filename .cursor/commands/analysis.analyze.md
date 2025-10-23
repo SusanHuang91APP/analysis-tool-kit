@@ -18,9 +18,9 @@ scripts:
   - `"features/001-會員註冊.md"`
   - `"apis/001-登入API"`
   - `"server.md"`
-  - `"components/001-按鈕元件"` (Shared 類型)
+  - `"components/001-按鈕元件"`
 
-- **說明**: 腳本會自動搜尋 Topic 目錄和 Shared 目錄，找到對應的 .md 檔案
+- **說明**: 腳本會自動在當前 Topic 目錄下搜尋對應的 .md 檔案
 
 **`source-files...` (建議提供)**：
 
@@ -44,7 +44,7 @@ flowchart TD
     
     RunScript --> CheckResult{腳本執行<br/>成功?}
     CheckResult -->|失敗| Error[回報錯誤訊息]
-    CheckResult -->|成功| ParseEnv[解析環境變數<br/>TARGET_FILE<br/>OVERVIEW_FILE<br/>檔案分類]
+    CheckResult -->|成功| ParseEnv[解析環境變數<br/>TARGET_FILE<br/>OVERVIEW_FILE]
     
     ParseEnv --> ReadContext[讀取必要檔案<br/>constitution.md<br/>目標分析檔案<br/>overview.md<br/>原始碼]
     
@@ -130,7 +130,7 @@ flowchart TD
    
    腳本會執行：
    - ✅ 驗證目標檔案存在
-   - ✅ 判斷檔案類別（Topic 或 Shared）
+   - ✅ 在當前 Topic 目錄下尋找檔案
    - ✅ 確定對應的 overview.md
    - ✅ 分類原始碼檔案（View/Controller/Service/Component）
    - ✅ 輸出環境變數供 AI 使用
@@ -388,7 +388,7 @@ flowchart TD
 /analysis.analyze "server.md" \
   Controllers/HomeController.cs
 
-# 範例 4: 分析共用元件（Shared）
+# 範例 4: 分析共用元件
 /analysis.analyze "components/001-按鈕元件" \
   Components/Button.tsx
 

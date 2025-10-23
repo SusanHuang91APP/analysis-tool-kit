@@ -73,7 +73,6 @@ get_analysis_paths() {
     local kit_dir="$(get_kit_location)"
     local kit_parent_dir="$(dirname "$kit_dir")"  # Parent directory of .analysis-kit
     local analysis_base_dir="$kit_parent_dir/analysis"
-    local shared_dir="$analysis_base_dir/shared"
     local topic_dir=""
     
     if [[ "$current_branch" =~ ^analysis/ ]]; then
@@ -88,7 +87,6 @@ CURRENT_BRANCH='$current_branch'
 KIT_DIR='$kit_dir'
 KIT_PARENT_DIR='$kit_parent_dir'
 ANALYSIS_BASE_DIR='$analysis_base_dir'
-SHARED_DIR='$shared_dir'
 TOPIC_DIR='$topic_dir'
 CONSTITUTION_FILE='$kit_dir/memory/constitution.md'
 TEMPLATES_DIR='$kit_dir/templates'
@@ -98,77 +96,26 @@ EOF
 # Get overview.md path based on file category
 # Usage: get_overview_path "topic" "$TOPIC_DIR" or get_overview_path "shared" "$SHARED_DIR"
 get_overview_path() {
-    local category="$1"  # "topic" or "shared"
-    local target_dir="$2"
-    
-    if [[ "$category" == "shared" ]]; then
-        echo "$target_dir/overview.md"
-    else
-        echo "$target_dir/overview.md"
-    fi
+    local topic_dir="$1"
+    echo "$topic_dir/overview.md"
 }
 
-# Ensure shared directory structure exists
-ensure_shared_structure() {
-    local shared_dir="$1"
-    local templates_dir="$2"
+# Ensure topic directory structure exists
+ensure_topic_structure() {
+    local topic_dir="$1"
     
-    # Create shared directory if not exists
-    mkdir -p "$shared_dir"
-    
-    # Create subdirectories
-    mkdir -p "$shared_dir/request-pipeline"
-    mkdir -p "$shared_dir/components"
-    mkdir -p "$shared_dir/helpers"
-    
-    # Create shared overview.md if not exists
-    local overview_file="$shared_dir/overview.md"
-    if [[ ! -f "$overview_file" ]]; then
-        local overview_template="$templates_dir/overview-template.md"
-        if [[ -f "$overview_template" ]]; then
-            cp "$overview_template" "$overview_file"
-            
-            # Update template placeholders
-            local current_date=$(date +%Y-%m-%d)
-            sed -i.bak \
-                -e "s/\[Topic Name\]/Shared Components/g" \
-                -e "s/\[YYYY-MM-DD\]/$current_date/g" \
-                "$overview_file"
-            rm -f "${overview_file}.bak"
-            
-            log_success "Created shared/overview.md"
-        else
-            log_warning "Overview template not found: $overview_template"
-        fi
-    fi
+    # Create topic subdirectories
+    mkdir -p "$topic_dir/features"
+    mkdir -p "$topic_dir/apis"
+    mkdir -p "$topic_dir/request-pipeline"
+    mkdir -p "$topic_dir/helpers"
 }
 
-# Determine file category (topic or shared)
-# Usage: get_file_category "feature" or get_file_category "component"
-get_file_category() {
-    local type="$1"
-    
-    case "$type" in
-        server|client|feature|api)
-            echo "topic"
-            ;;
-        request-pipeline|component|helper)
-            echo "shared"
-            ;;
-        *)
-            echo "unknown"
-            ;;
-    esac
-}
-
-# Get target directory based on type
-# Usage: get_target_directory "$TOPIC_DIR" "$SHARED_DIR" "feature"
+# Get target directory based on type, always within the topic
+# Usage: get_target_directory "$TOPIC_DIR" "feature"
 get_target_directory() {
     local topic_dir="$1"
-    local shared_dir="$2"
-    local type="$3"
-    
-    local category=$(get_file_category "$type")
+    local type="$2"
     
     case "$type" in
         server|client)
@@ -181,13 +128,10 @@ get_target_directory() {
             echo "$topic_dir/apis"
             ;;
         request-pipeline)
-            echo "$shared_dir/request-pipeline"
-            ;;
-        component)
-            echo "$shared_dir/components"
+            echo "$topic_dir/request-pipeline"
             ;;
         helper)
-            echo "$shared_dir/helpers"
+            echo "$topic_dir/helpers"
             ;;
         *)
             echo ""

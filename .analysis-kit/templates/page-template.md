@@ -46,6 +46,9 @@
 - 必須用序列圖清楚展示使用者操作 → 事件處理 → 狀態更新 → UI 回饋的完整流程
 - 所有依賴的元件/服務都必須記錄到依賴關係表，並確認是否已建立分析檔案
 - Props 介面和狀態變數必須詳細說明用途
+- 狀態管理分析必須完整，列出所有 state 變數，並用表格詳細說明每個 state 的用途、初始值、以及會觸發其變更的操作。
+- 條件式渲染分析必須窮舉所有條件分支，並附上對應的 JSX 程式碼片段，清楚展示 UI 如何根據狀態變化。
+- 對於每個關鍵的 DOM 結構和事件處理，都必須附上對應的程式碼片段以提供上下文。
 
 ---
 
@@ -115,7 +118,7 @@ const routes = [
 
 **HTML/JSX 結構：**
 ```html
-<!-- [待補充：元件的 HTML/JSX 結構] -->
+<!-- [待補充：貼上元件主要的 JSX/HTML 結構，移除不相關的細節] -->
 <div class="container">
     <header>...</header>
     <main>...</main>
@@ -156,7 +159,17 @@ html
 ```
 
 **關鍵 DOM 操作：**
-- [待補充：JavaScript/Framework 如何操作這些 DOM 節點]
+**關鍵 DOM 操作：**
+[待補充：JavaScript/Framework 如何操作這些 DOM 節點，例如：透過 ref 或事件處理]
+**程式碼範例：**
+```typescript
+// [待補充：操作 DOM 的相關程式碼片段]
+const inputRef = useRef<HTMLInputElement>(null);
+
+const focusInput = () => {
+    inputRef.current?.focus();
+};
+```
 
 ---
 
@@ -205,16 +218,21 @@ sequenceDiagram
 
 ### 6.1 狀態管理
 
-**狀態變數：**
-```typescript
-// [待補充：狀態變數定義]
-const [state1, setState1] = useState(initialValue);
-const [state2, setState2] = useState(initialValue);
-```
+**狀態變數詳解：**
 
-**狀態說明：**
-- `state1` - [待補充：用途說明]
-- `state2` - [待補充：用途說明]
+| 狀態名稱 | 型別 | 初始值 | 用途說明 | 更新觸發時機 |
+|----------|------|----------|------------|----------------|
+| `isLoading` | `boolean` | `true` | 控制載入中動畫的顯示 | `useEffect` 載入資料時設為 `true`，API 回應後設為 `false` |
+| `data` | `User[]` | `[]` | 儲存從 API 獲取的用戶資料 | API 成功回應時更新 |
+| `error` | `string \| null` | `null` | 儲存 API 請求錯誤訊息 | API 請求失敗時更新 |
+
+**狀態宣告程式碼：**
+```typescript
+// [待補充：所有狀態變數的宣告程式碼]
+const [isLoading, setIsLoading] = useState(true);
+const [data, setData] = useState<User[]>([]);
+const [error, setError] = useState<string | null>(null);
+```
 
 **狀態流向圖：**
 ```mermaid
@@ -295,6 +313,37 @@ useEffect(() => {
 
 ---
 
+### 6.5 條件式渲染 (Conditional Rendering)
+
+**渲染邏輯分析：**
+本元件的 UI 會根據以下狀態條件進行動態渲染：
+
+| 判斷條件 | 狀態依賴 | 渲染結果 | JSX 程式碼片段 |
+|----------|------------|------------|----------------|
+| `isLoading` 為 `true` | `isLoading` | 顯示載入中元件 | `isLoading && <Spinner />` |
+| `error` 有值 | `error` | 顯示錯誤訊息 | `error && <ErrorMessage message={error} />` |
+| `data` 為空陣列 | `data`, `isLoading` | 顯示「無資料」提示 | `!isLoading && !error && data.length === 0 && <p>No data found.</p>` |
+| `data` 有資料 | `data`, `isLoading` | 渲染資料列表 | `!isLoading && !error && data.length > 0 && <DataList data={data} />` |
+
+**程式碼實作：**
+```jsx
+// [待補充：包含完整條件式渲染邏輯的 JSX 程式碼]
+return (
+    <div>
+        {isLoading && <Spinner />}
+        {error && <ErrorMessage message={error} />}
+        {!isLoading && !error && data.length === 0 && <p>No data found.</p>}
+        {!isLoading && !error && data.length > 0 && (
+            <ul>
+                {data.map(item => <li key={item.id}>{item.name}</li>)}
+            </ul>
+        )}
+    </div>
+);
+```
+
+---
+
 ## 7. 架構與品質分析 (Architecture & Quality Analysis)
 
 ### 7.1 效能優化
@@ -348,30 +397,32 @@ useEffect(() => {
 
 ## 8. 📋 品質檢查清單 (Quality Checklist)
 
-### ⭐ 基礎框架 (1-40%)
-- [ ] 文件元數據完整（日期、品質等級）
-- [ ] 元件基本資訊完整
-- [ ] UI 結構已描述
+### ⭐ 基礎框架級 (Foundation Level)
+- [ ] **1.1 📂 分析檔案資訊**：分析的檔案路徑已填寫。
+- [ ] **3.1 View 引擎 / 框架架構**：前端技術選型與架構模式已說明。
+- [ ] **4.1 元件定義**：元件基本資訊已填寫。
+- [ ] **5.1 元件結構**：元件的 JSX/HTML 結構已提供。
 
-### ⭐⭐⭐ 邏輯完成 (41-70%)
-- [ ] 互動流程圖已繪製
-- [ ] 狀態管理已分析
-- [ ] 事件處理已說明
-- [ ] Props 介面已定義
+### ⭐⭐ 核心邏輯級 (Core Logic Level)
+- [ ] **3.2 資料初始化流程**：前端資料初始化流程已說明。
+- [ ] **3.3 狀態管理策略**：狀態管理方案、結構、更新模式已說明。
+- [ ] **5.4 互動流程**：使用者互動的 Mermaid 序列圖已繪製完成。
+- [ ] **6.1 狀態管理**：狀態變數詳解表格已填寫，並提供狀態宣告程式碼。
 
-### ⭐⭐⭐⭐ 架構完整 (71-90%)
-- [ ] **依賴關係表已完成**
-- [ ] **所有依賴項都已建立分析檔案**
-- [ ] 效能優化檢查已完成
-- [ ] 可訪問性評估已完成
+### ⭐⭐⭐ 整合分析級 (Integration Analysis Level)
+- [ ] **1.2 📦 依賴關係**：依賴關係表已完整填寫。
+- [ ] **5.3 樣式分析**：樣式方案與主要 CSS 類別已分析。
+- [ ] **6.2 Props 介面**：元件的 Props 介面已定義並說明。
+- [ ] **6.3 事件處理**：關鍵事件處理函式的處理流程與程式碼範例已提供。
+- [ ] **6.5 條件式渲染**：渲染邏輯分析表格已填寫，並提供 JSX 實作程式碼。
 
-### ⭐⭐⭐⭐⭐ 完整分析 (91-100%)
-- [ ] 效能優化建議具體
-- [ ] a11y 改善方案明確
-- [ ] 可重用性分析完整
-- [ ] 測試策略已規劃
+### ⭐⭐⭐⭐ 架構品質級 (Architecture Quality Level)
+- [ ] **6.2 已知技術債**：已知的前端技術債已列表說明。
+- [ ] **7.1 效能優化**：效能檢查清單已完成評估。
+- [ ] **7.2 可訪問性**：a11y 檢查清單已完成評估。
+- [ ] **7.3 可重用性評估**：元件的可重用性已分析。
+- [ ] **7.4 測試覆蓋**：測試策略已說明。
 
 ---
 
 **當前品質等級**：⭐ 基礎框架 (0%)
-

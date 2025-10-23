@@ -106,21 +106,20 @@ Analysis Tool Kit V2 是一個專為程式碼分析和架構文檔生成設計�
 
 ```
 analysis/
-├── shared/                          # 全域共用分析
-│   ├── overview.md                  # Shared 追蹤清單
-│   ├── request-pipeline/
-│   │   ├── 001-auth-filter.md
-│   │   └── 002-logging-middleware.md
-│   ├── components/
-│   │   ├── 001-login-form.md
-│   │   └── 002-data-table.md
-│   └── helpers/
-│       ├── 001-date-helper.md
-│       └── 002-validation-helper.md
-└── 001-會員管理功能/              # Topic 分析
+├── 000-shared/                  
+└── 001-會員管理功能/                  # Topic 分析
     ├── overview.md                  # Topic 追蹤清單
     ├── server.md                    # 後端分析
     ├── client.md                    # 前端分析
+    ├── request-pipeline/
+    │   ├── 001-auth-filter.md
+    │   └── 002-logging-middleware.md
+    ├── components/
+    │   ├── 001-login-form.md
+    │   └── 002-data-table.md
+    ├── helpers/
+    │   ├── 001-date-helper.md
+    │   └── 002-validation-helper.md
     ├── features/                    # 功能分析
     │   ├── 001-會員註冊.md
     │   ├── 002-會員登入.md
@@ -143,13 +142,7 @@ analysis/
 | `client` | Topic 根目錄 | 前端頁面驅動邏輯分析 |
 | `feature` | Topic/features/ | 重點功能分析 |
 | `api` | Topic/apis/ | API Endpoint 規格（含前後端調用） |
-
-### Shared 類型（建立在 shared/ 目錄下）
-
-| 類型 | 檔案位置 | 用途 |
-|------|---------|------|
 | `request-pipeline` | shared/request-pipeline/ | Filter/Middleware 分析 |
-| `component` | shared/components/ | 共用 UI 元件分析 |
 | `helper` | shared/helpers/ | 共用輔助函式分析 |
 
 ---
@@ -239,24 +232,59 @@ analysis/
 
 ## 🔄 工作流程
 
-### 典型的分析流程
+### 分析指令流程
 
 ```mermaid
 graph TD
-    A[1. analysis-init.sh] -->|建立環境| B[2. analysis-create.sh]
-    B -->|建立檔案| C[3. analysis-analyze.sh]
-    C -->|提升品質| C
-    C -->|完成| D[分析完成]
-    
-    style A fill:#e1f5ff
-    style B fill:#fff3e0
-    style C fill:#f3e5f5
-    style D fill:#e8f5e9
+    subgraph "Phase 1: 環境初始化"
+        A[Start] --> B{/analysis.init<br>會員管理功能};
+        B --> C[分析分支 analysis/001-會員管理功能<br>Topic 目錄結構];
+    end
+
+    subgraph "Phase 2: 建立分析檔案"
+        C --> D{/analysis.create feature<br>Controllers/MemberController.cs};
+        D --> E[features/001-會員註冊.md<br>品質: 📝 待分析];
+        E --> F{/analysis.create api<br>Routes/api/members.ts};
+        F --> G[apis/001-會員API.md<br>品質: 📝 待分析];
+    end
+
+    subgraph "Phase 3: 迭代分析與品質提升"
+        G --> H{/analysis.analyze<br>features/001-會員註冊};
+        H --> I["features/001-會員註冊.md<br>品質: ⭐⭐⭐ 邏輯完成"];
+        I --> J{More Analysis?};
+        J -- Yes --> H;
+        J -- No --> K[分析完成];
+    end
+
+    style A fill:#e8f5e9,stroke:#333,stroke-width:2px
+    style B fill:#e1f5fe,stroke:#333,stroke-width:2px
+    style D fill:#fff3e0,stroke:#333,stroke-width:2px
+    style F fill:#fff3e0,stroke:#333,stroke-width:2px
+    style H fill:#f3e5f5,stroke:#333,stroke-width:2px
+    style K fill:#e8f5e9,stroke:#333,stroke-width:2px
 ```
 
-**Step 1:** `analysis-init.sh` 建立分支和基礎結構  
-**Step 2:** `analysis-create.sh` 建立具體分析檔案（可多次呼叫）  
-**Step 3:** `analysis-analyze.sh` 反覆更新檔案內容，提升品質等級  
+**Step 1: 初始化 (`/analysis.init`)**
+- **目的**: 建立一個獨立的 Topic 分析環境。
+- **動作**:
+    - 建立新的 Git 分支 (`analysis/###-topic-name`)。
+    - 在 `analysis/` 目錄下建立 Topic 資料夾。
+    - 產生基礎分析檔案 (`overview.md`, `server.md`, `client.md`)。
+
+**Step 2: 建立檔案 (`/analysis.create`)**
+- **目的**: 針對特定程式碼檔案，建立對應的分析文檔。
+- **動作**:
+    - 根據指定的類型 (`feature`, `api`, `component` 等) 和路徑，在對應目錄下建立 `.md` 檔案。
+    - 檔案會被自動編號，並填充對應的範本內容。
+    - 初始品質等級為「📝 待分析」。
+
+**Step 3: 迭代分析 (`/analysis.analyze`)**
+- **目的**: 深度分析檔案內容，提升其品質等級。
+- **動作**:
+    - 使用者提供要分析的 `.md` 檔案和相關的原始碼檔案。
+    - AI 根據 `constitution.md` 的規則進行分析，填充內容、產生圖表。
+    - 腳本會根據檔案末尾的品質檢查清單，自動重新計算品質等級。
+    - 此步驟可以反覆執行，直到達到「⭐⭐⭐⭐⭐ 完整分析」。
 
 ### Scripts 與 AI 指令的對應關係
 

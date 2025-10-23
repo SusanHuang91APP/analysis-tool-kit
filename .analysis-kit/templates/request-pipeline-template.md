@@ -45,6 +45,7 @@
 - 必須用流程圖展示請求 → 檢查 → 決策 → 繼續/短路 的邏輯
 - 重點關注效能影響（每個請求都會執行）和安全責任（授權、驗證）
 - 必須提供在不同層級（全域/Controller/Action）套用的範例
+- **必須提供 Pipeline 元件的 **完整程式碼實作**，並對關鍵邏輯進行註解。**
 
 ---
 
@@ -167,7 +168,7 @@ graph LR
 ```csharp
 public override void OnActionExecuting(ActionExecutingContext context)
 {
-    // [待補充：請求攔截邏輯]
+    // [待補充：貼上 Pipeline 元件的完整程式碼實作]
     
     // 檢查條件
     if (!isValid)
@@ -192,7 +193,7 @@ public override void OnActionExecuting(ActionExecutingContext context)
 ```csharp
 public override void OnActionExecuted(ActionExecutedContext context)
 {
-    // [待補充：回應修改邏輯]
+    // [待補充：貼上 Pipeline 元件的完整程式碼實作]
     
     if (context.Result is JsonResult result)
     {
@@ -276,9 +277,6 @@ public class MyController : Controller
 - [ ] 非同步處理（如適用）
 - [ ] 避免阻塞操作
 
-**優化建議：**
-- [待補充：具體的優化方案]
-
 ---
 
 ### 7.2 安全性檢查
@@ -336,27 +334,24 @@ logger.Info($"Pipeline executed: {pipelineName}");
 
 ## 8. 📋 品質檢查清單 (Quality Checklist)
 
-### ⭐ 基礎框架 (1-40%)
-- [ ] 文件元數據完整（日期、品質等級）
-- [ ] 元件基本資訊完整
-- [ ] 註冊方式已說明
+### ⭐ 基礎框架級 (Foundation Level)
+- [ ] **1.1 📂 分析檔案資訊**：分析的檔案路徑已填寫。
+- [ ] **3.1 元件定義**：Pipeline 元件的基本資訊已定義。
+- [ ] **3.2 註冊方式與順序**：註冊方式與執行順序已說明。
+- [ ] **3.3 適用範圍**：元件的適用範圍已闡述。
 
-### ⭐⭐⭐ 邏輯完成 (41-70%)
-- [ ] 執行流程圖已繪製
-- [ ] 觸發條件已定義
-- [ ] 處理邏輯已說明
+### ⭐⭐ 核心邏輯級 (Core Logic Level)
+- [ ] **4.1 觸發條件**：Pipeline 的觸發條件已定義。
+- [ ] **4.2 處理流程**：Mermaid 流程圖已繪製，且關鍵決策點已說明。
+- [ ] **4.3 短路邏輯**：短路條件與回應方式已闡述。
+- [ ] **5.1 請求攔截**：請求攔截的完整程式碼與處理邏輯已提供。
 
-### ⭐⭐⭐⭐ 架構完整 (71-90%)
-- [ ] **依賴關係表已完成**
-- [ ] **所有依賴項都已建立分析檔案**
-- [ ] 效能影響已評估
-- [ ] 安全性檢查已完成
-
-### ⭐⭐⭐⭐⭐ 完整分析 (91-100%)
-- [ ] 錯誤處理完整
-- [ ] 日誌策略明確
-- [ ] 使用範例完整
-- [ ] 優化建議具體
+### ⭐⭐⭐ 整合分析級 (Integration Analysis Level)
+- [ ] **1.2 📦 依賴關係**：依賴關係表已完整填寫。
+- [ ] **6. 使用範例**：在 Controller、Action 等不同層級的使用範例已提供。
+- [ ] **7.1 效能影響評估**：效能檢查清單已完成評估。
+- [ ] **7.2 安全性檢查**：安全責任與安全性檢查清單已完成評估。
+- [ ] **7.3 錯誤處理**：錯誤處理策略與程式碼範例已提供。
 
 ---
 

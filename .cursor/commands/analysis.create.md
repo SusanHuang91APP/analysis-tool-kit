@@ -10,8 +10,7 @@ scripts:
 使用者參數格式：`[type] <source-files...>`
 
 - **`type`** (選填): 指定分析類型
-  - Topic 類型: `server` | `client` | `feature` | `api`
-  - Shared 類型: `request-pipeline` | `component` | `helper`
+  - `server` | `client` | `feature` | `api` | `request-pipeline` | `helper`
   
 - **`source-files...`** (必填): 一個或多個原始碼檔案路徑
   - 支援: `.cshtml`, `.cs`, `.tsx`, `.jsx`, `.ts`, `.js`, `.vue`
@@ -80,7 +79,7 @@ flowchart TD
 - 若未提供，回報錯誤並結束
 
 **驗證 type（若提供）**:
-- 檢查是否為合法類型：`server` | `client` | `feature` | `api` | `request-pipeline` | `component` | `helper`
+- 檢查是否為合法類型：`server` | `client` | `feature` | `api` | `request-pipeline` | `helper`
 - 若無效，回報錯誤並結束
 
 **讀取檔案基本資訊**:
@@ -105,9 +104,9 @@ flowchart TD
 ```
 .cshtml                  → View
 *Controller.cs           → Controller
-*Service.cs/*Repository  → Service
+*Service.cs/*Repository  → Service (建議 api 類型)
 *Filter.cs/*Middleware   → Filter/Middleware
-.tsx/.jsx/.vue          → Component
+.tsx/.jsx/.vue          → Component (建議 feature 類型)
 */api/*.ts/*.js         → API Route
 *Helper.ts/*Util.ts     → Utility
 ```
@@ -116,7 +115,7 @@ flowchart TD
 - 包含 `[Route("api/"` → 強烈建議 `api`
 - 包含 `IActionFilter` / `IMiddleware` → 強烈建議 `request-pipeline`
 - 包含 `@model` + Razor 語法 → 建議 `client`
-- 包含 React Hooks → 建議 `component` 或 `client`
+- 包含 React Hooks → 建議 `feature`
 
 **命名模式判斷**:
 - 檔名含 Detail/List/Index + .cshtml → 建議 `client`
@@ -124,8 +123,7 @@ flowchart TD
 - 多個相關檔案 → 建議 `feature`
 
 **共用性判斷** (決定 Topic vs Shared):
-- `component` / `helper` / `request-pipeline` → `analysis/shared/`
-- `server` / `client` / `feature` / `api` → 當前 Topic 目錄
+- 所有類型 (`component`, `helper` 等) 現在都建立在當前的 Topic 目錄下
 
 #### 2.2 拆分建議機制
 
@@ -320,8 +318,8 @@ flowchart TD
 /analysis.create api Controllers/Api/ProductsController.cs
 # AI 偵測到 [Route("api/")] 後推薦 `api`
 
-# 共用元件 (自動建立到 shared/)
-/analysis.create component Components/Button.tsx
+# 元件分析 (統一為 feature)
+/analysis.create feature Components/Button.tsx
 
 # 大型檔案 - 會建議拆分
 /analysis.create Views/CheckoutPage.cshtml
@@ -331,11 +329,11 @@ flowchart TD
 /analysis.create Controllers/OrderController.cs Services/OrderService.cs Views/Order/Detail.cshtml
 # AI 詢問：1) 合併成 feature  2) 分別建立  3) 自訂
 
-# Filter/Middleware (自動建立到 shared/)
-/analysis.create Filters/AuthFilter.cs
+# Filter/Middleware 分析
+/analysis.create request-pipeline Filters/AuthFilter.cs
 
-# Helper (自動建立到 shared/)
-/analysis.create Utils/DateHelper.ts
+# Helper 分析
+/analysis.create helper Utils/DateHelper.ts
 ```
 
 ---
@@ -348,9 +346,8 @@ flowchart TD
 | `client` | Topic 根目錄 | client-template.md | 前端頁面邏輯 |
 | `feature` | Topic/features/ | feature-template.md | 功能分析 |
 | `api` | Topic/apis/ | api-template.md | API 規格 |
-| `request-pipeline` | shared/request-pipeline/ | request-pipeline-template.md | Filter/Middleware |
-| `component` | shared/components/ | component-template.md | 共用元件 |
-| `helper` | shared/helpers/ | helper-template.md | 輔助函式 |
+| `request-pipeline` | Topic/request-pipeline/ | request-pipeline-template.md | Filter/Middleware |
+| `helper` | Topic/helpers/ | helper-template.md | 輔助函式 |
 
 ---
 
@@ -362,7 +359,7 @@ flowchart TD
    - 錯誤訊息：「必須提供至少一個原始碼檔案」
    
 2. **type 無效**: 
-   - 錯誤訊息：「無效的類型，請使用: server, client, feature, api, component, request-pipeline, helper」
+   - 錯誤訊息：「無效的類型，請使用: server, client, feature, api, request-pipeline, helper」
 
 3. **檔案不存在**: 
    - 錯誤訊息：「找不到檔案: <path>」
@@ -380,7 +377,7 @@ flowchart TD
 **判斷優先順序**:
 1. 內容強特徵 (如 `[Route("api/"`) 優先於檔名
 2. 多相關檔案優先考慮 `feature` 類型
-3. 共用性判斷決定 Topic vs Shared
+3. 所有檔案皆建立於當前 Topic 目錄下
 
 **典型案例**:
 

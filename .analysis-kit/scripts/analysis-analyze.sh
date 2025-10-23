@@ -72,75 +72,40 @@ fi
 
 TARGET_FILE_NAME=$(basename "$TARGET_FILE_ARG" .md)
 TARGET_FILE=""
-TARGET_CATEGORY=""
+OVERVIEW_FILE="$TOPIC_DIR/overview.md"
 
-# Check in TOPIC_DIR first
-if [[ -f "$TOPIC_DIR/$TARGET_FILE_ARG" ]]; then
-    TARGET_FILE="$TOPIC_DIR/$TARGET_FILE_ARG"
-    TARGET_CATEGORY="topic"
-elif [[ -f "$TOPIC_DIR/${TARGET_FILE_ARG}.md" ]]; then
-    TARGET_FILE="$TOPIC_DIR/${TARGET_FILE_ARG}.md"
-    TARGET_CATEGORY="topic"
-elif [[ -f "$TOPIC_DIR/features/$TARGET_FILE_ARG" ]]; then
-    TARGET_FILE="$TOPIC_DIR/features/$TARGET_FILE_ARG"
-    TARGET_CATEGORY="topic"
-elif [[ -f "$TOPIC_DIR/features/${TARGET_FILE_ARG}.md" ]]; then
-    TARGET_FILE="$TOPIC_DIR/features/${TARGET_FILE_ARG}.md"
-    TARGET_CATEGORY="topic"
-elif [[ -f "$TOPIC_DIR/apis/$TARGET_FILE_ARG" ]]; then
-    TARGET_FILE="$TOPIC_DIR/apis/$TARGET_FILE_ARG"
-    TARGET_CATEGORY="topic"
-elif [[ -f "$TOPIC_DIR/apis/${TARGET_FILE_ARG}.md" ]]; then
-    TARGET_FILE="$TOPIC_DIR/apis/${TARGET_FILE_ARG}.md"
-    TARGET_CATEGORY="topic"
-# Check in SHARED_DIR
-elif [[ -f "$SHARED_DIR/$TARGET_FILE_ARG" ]]; then
-    TARGET_FILE="$SHARED_DIR/$TARGET_FILE_ARG"
-    TARGET_CATEGORY="shared"
-elif [[ -f "$SHARED_DIR/${TARGET_FILE_ARG}.md" ]]; then
-    TARGET_FILE="$SHARED_DIR/${TARGET_FILE_ARG}.md"
-    TARGET_CATEGORY="shared"
-elif [[ -f "$SHARED_DIR/components/$TARGET_FILE_ARG" ]]; then
-    TARGET_FILE="$SHARED_DIR/components/$TARGET_FILE_ARG"
-    TARGET_CATEGORY="shared"
-elif [[ -f "$SHARED_DIR/components/${TARGET_FILE_ARG}.md" ]]; then
-    TARGET_FILE="$SHARED_DIR/components/${TARGET_FILE_ARG}.md"
-    TARGET_CATEGORY="shared"
-elif [[ -f "$SHARED_DIR/helpers/$TARGET_FILE_ARG" ]]; then
-    TARGET_FILE="$SHARED_DIR/helpers/$TARGET_FILE_ARG"
-    TARGET_CATEGORY="shared"
-elif [[ -f "$SHARED_DIR/helpers/${TARGET_FILE_ARG}.md" ]]; then
-    TARGET_FILE="$SHARED_DIR/helpers/${TARGET_FILE_ARG}.md"
-    TARGET_CATEGORY="shared"
-elif [[ -f "$SHARED_DIR/request-pipeline/$TARGET_FILE_ARG" ]]; then
-    TARGET_FILE="$SHARED_DIR/request-pipeline/$TARGET_FILE_ARG"
-    TARGET_CATEGORY="shared"
-elif [[ -f "$SHARED_DIR/request-pipeline/${TARGET_FILE_ARG}.md" ]]; then
-    TARGET_FILE="$SHARED_DIR/request-pipeline/${TARGET_FILE_ARG}.md"
-    TARGET_CATEGORY="shared"
-else
+# Potential directories within the topic
+SEARCH_DIRS=(
+    "$TOPIC_DIR"
+    "$TOPIC_DIR/features"
+    "$TOPIC_DIR/apis"
+    "$TOPIC_DIR/helpers"
+    "$TOPIC_DIR/request-pipeline"
+)
+
+# Search for the target file
+for dir in "${SEARCH_DIRS[@]}"; do
+    if [[ -f "$dir/$TARGET_FILE_ARG" ]]; then
+        TARGET_FILE="$dir/$TARGET_FILE_ARG"
+        break
+    elif [[ -f "$dir/${TARGET_FILE_ARG}.md" ]]; then
+        TARGET_FILE="$dir/${TARGET_FILE_ARG}.md"
+        break
+    fi
+done
+
+if [[ -z "$TARGET_FILE" ]]; then
     log_error "Target file not found: $TARGET_FILE_ARG" >&2
     log_error "Searched in:" >&2
-    log_error "  - $TOPIC_DIR" >&2
-    log_error "  - $TOPIC_DIR/features/" >&2
-    log_error "  - $TOPIC_DIR/apis/" >&2
-    log_error "  - $SHARED_DIR" >&2
-    log_error "  - $SHARED_DIR/components/" >&2
-    log_error "  - $SHARED_DIR/helpers/" >&2
-    log_error "  - $SHARED_DIR/request-pipeline/" >&2
+    for dir in "${SEARCH_DIRS[@]}"; do
+        log_error "  - $dir" >&2
+    done
     exit 1
 fi
 
 log_success "Found target file: $TARGET_FILE"
-log_info "Category: $TARGET_CATEGORY"
 
 # --- Determine Overview File ---
-if [[ "$TARGET_CATEGORY" == "shared" ]]; then
-    OVERVIEW_FILE="$SHARED_DIR/overview.md"
-else
-    OVERVIEW_FILE="$TOPIC_DIR/overview.md"
-fi
-
 if [[ ! -f "$OVERVIEW_FILE" ]]; then
     log_error "Overview file not found: $OVERVIEW_FILE" >&2
     exit 1
@@ -160,7 +125,6 @@ VIEW_FILES=()
 CONTROLLER_FILES=()
 SERVICE_FILES=()
 UTILITY_FILES=()
-COMPONENT_FILES=()
 OTHER_FILES=()
 
 for file_path in "${SOURCE_FILES[@]}"; do
@@ -182,8 +146,6 @@ for file_path in "${SOURCE_FILES[@]}"; do
                 CONTROLLER_FILES+=("$file_path")
             elif [[ $file_path == *Service.ts || $file_path == *Service.tsx ]]; then
                 SERVICE_FILES+=("$file_path")
-            elif [[ $file_path == */components/* ]]; then
-                COMPONENT_FILES+=("$file_path")
             elif [[ $file_path == */api/* || $file_path == */routes/* ]]; then
                 CONTROLLER_FILES+=("$file_path")  # API routes treated as controllers
             else
@@ -210,7 +172,6 @@ if [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
     [[ ${#VIEW_FILES[@]} -gt 0 ]] && log_info "  Views: ${VIEW_FILES[*]}"
     [[ ${#CONTROLLER_FILES[@]} -gt 0 ]] && log_info "  Controllers: ${CONTROLLER_FILES[*]}"
     [[ ${#SERVICE_FILES[@]} -gt 0 ]] && log_info "  Services: ${SERVICE_FILES[*]}"
-    [[ ${#COMPONENT_FILES[@]} -gt 0 ]] && log_info "  Components: ${COMPONENT_FILES[*]}"
     [[ ${#UTILITY_FILES[@]} -gt 0 ]] && log_info "  Utilities: ${UTILITY_FILES[*]}"
     [[ ${#OTHER_FILES[@]} -gt 0 ]] && log_info "  Other: ${OTHER_FILES[*]}"
 fi
@@ -233,7 +194,6 @@ echo "=== Environment Variables for AI ==="
 echo "TARGET_FILE='$TARGET_FILE'"
 echo "OVERVIEW_FILE='$OVERVIEW_FILE'"
 echo "CONSTITUTION_FILE='$CONSTITUTION_FILE'"
-echo "TARGET_CATEGORY='$TARGET_CATEGORY'"
 echo ""
 
 # Note: Quality calculation will be done AFTER AI updates the file

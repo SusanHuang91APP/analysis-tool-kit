@@ -55,6 +55,9 @@
 - 必須用流程圖展示從接收請求到返回回應的完整邏輯，包含錯誤處理分支
 - 後端依賴和前端依賴要分開列表
 - 重點關注安全性（授權、輸入驗證、注入防護）和效能（快取、查詢優化）
+- **必須追蹤 Controller 的依賴注入，並在依賴關係表中詳述每個依賴的用途。**
+- **必須附上關鍵業務邏輯的程式碼片段，並逐行註解說明。**
+- **資料流分析需包含從 DTO 到 Model，再到 ViewModel 的完整轉換過程。**
 
 ---
 
@@ -233,54 +236,176 @@ interface ErrorResponse {
 
 ### 3.4 業務邏輯 (Business Logic)
 
-#### 3.4.1 處理流程
-
-**執行步驟：**
-1. **接收請求**：解析請求參數
-2. **驗證輸入**：檢查必要欄位和格式
-3. **授權檢查**：驗證使用者權限
-4. **業務處理**：執行核心業務邏輯
-5. **資料操作**：查詢或更新資料庫
-6. **組裝回應**：格式化回應資料
-7. **返回結果**：發送 HTTP 回應
-
-**流程圖：**
-```mermaid
-graph TD
-    A[接收 HTTP 請求] --> B[解析參數]
-    B --> C{參數驗證}
-    C -->|失敗| D[返回 400]
-    C -->|通過| E{授權檢查}
-    E -->|失敗| F[返回 401/403]
-    E -->|通過| G[調用 Service]
-    G --> H{業務邏輯}
-    H -->|成功| I[返回 200 + 資料]
-    H -->|業務錯誤| J[返回 422]
-    H -->|系統錯誤| K[返回 500]
+#### 3.4.0 核心 Controller 方法 (Core Controller Method)
+**程式碼片段：**
+```csharp
+// [待補充：貼上 Controller Action 的完整程式碼]
+[HttpGet("{id}")]
+public async Task<IActionResult> GetById(int id)
+{
+    // ...
+}
 ```
 
-**關鍵決策點：**
-- **決策1**：[待補充：條件與影響]
-- **決策2**：[待補充：條件與影響]
+#### 3.4.1 核心流程 (Core Flow)
+[待補充：此方法的主要業務邏輯步驟，使用流程圖或編號列表]
+
+**執行步驟**：
+1. [待補充：第一步]
+2. [待補充：第二步]
+3. [待補充：第三步]
+
+**流程圖**（Mermaid）：
+```mermaid
+graph TD
+    A[開始] --> B[步驟1: 參數驗證]
+    B --> C[步驟2: 快取檢查]
+    C --> D{快取命中?}
+    D -->|是| E[返回快取資料]
+    D -->|否| F[步驟3: 查詢資料庫]
+    F --> G[步驟4: 資料處理]
+    G --> H[步驟5: 寫入快取]
+    H --> I[返回結果]
+    E --> I
+```
 
 ---
 
-#### 3.4.2 資料驗證
+#### 3.4.2 資料存取層調用 (Data Access Layer Calls)
+[待補充：此方法調用的所有 Repository 或 DAL 方法]
 
-**輸入驗證規則：**
-- `field1`: [待補充：驗證規則]
-- `field2`: [待補充：驗證規則]
+| Repository | 方法名稱 | 用途 | 查詢條件 | 回傳值 |
+|-----------|---------|------|---------|--------|
+| [Repository名] | [方法名] | [用途說明] | [查詢條件] | [回傳型別] |
 
-**業務規則驗證：**
-1. **規則1**：[待補充：業務規則]
-2. **規則2**：[待補充：業務規則]
+**範例**：
+```csharp
+// 取得商品頁資料
+var salePageData = _salePageRepository.GetSalePageById(salePageId);
+
+// 取得SKU資訊
+var skuList = _salePageRepository.GetSaleProductSKUBySKUIds(shopId, skuIds);
+```
 
 ---
 
-#### 3.4.3 調用的服務
+#### 3.4.3 其他服務調用 (Service Calls)
+[待補充：此方法調用的其他 Service 方法]
 
-**服務調用清單：**
-- `ServiceName.MethodName` - [待補充：用途] - [分析文件連結]
+| 服務名稱 | 方法名稱 | 用途 | 參數 | 回傳值 |
+|---------|---------|------|------|--------|
+| [服務名] | [方法名] | [用途說明] | [參數列表] | [回傳型別] |
+
+**範例**：
+```csharp
+// 取得多語系內容
+var multilingualData = _multilingualService.GetList<SalePageMultilingualEntity>(
+    MultilingualModuleTypeEnum.SalePage,
+    salePageIds,
+    shopId,
+    language
+);
+
+// 取得商店預設設定
+var shopDefault = _shopDefaultService.GetShopDefaultValue(
+    shopId,
+    ShopDefaultGroupTypeDefEnum.SalePage,
+    ShopDefaultKeyEnum.EnableIsComingSoon,
+    true
+);
+```
+
+---
+
+#### 3.4.4 資料處理與轉換 (Data Processing & Transformation)
+[待補充：資料驗證、轉換、映射邏輯]
+
+**資料驗證**：
+- [待補充：輸入驗證規則]
+- [待補充：業務規則驗證]
+
+**資料轉換**：
+```csharp
+// [待補充：資料映射、格式轉換範例]
+var entity = Mapper.Map<TargetEntity>(sourceEntity);
+```
+
+**資料聚合**：
+- [待補充：如何組合多個來源的資料]
+
+---
+
+### 3.5 資料模型轉換 (Data Model Transformation)
+
+### 3.5.1 請求模型 (Request DTO) -> 業務模型 (Business Model)
+**轉換邏輯：**
+[待補充：描述從 Request DTO 如何轉換/映射到後端內部使用的業務模型或實體]
+
+**程式碼範例 (e.g., AutoMapper / Manual Mapping)：**
+```csharp
+// [待補充：DTO 到 Model 的轉換程式碼]
+var businessModel = _mapper.Map<BusinessModel>(requestDto);
+```
+
+### 3.5.2 業務模型 (Business Model) -> 回應模型 (Response DTO)
+**轉換邏輯：**
+[待補充：描述從業務模型如何轉換/映射到最終的 Response DTO]
+
+**程式碼範例：**
+```csharp
+// [待補充：Model 到 DTO 的轉換程式碼]
+var responseDto = _mapper.Map<ResponseDto>(resultModel);
+```
+
+---
+
+### 3.6 快取策略分析 (Caching Strategy Analysis)
+
+#### 3.6.1 快取機制 (Cache Mechanism)
+[待補充：此方法的快取策略]
+
+**快取類型**：
+- [ ] Memory Cache (記憶體快取)
+- [ ] Redis Cache (分散式快取)
+- [ ] 無快取
+
+**快取設定**：
+```csharp
+// [待補充：快取相關程式碼]
+var cacheKeyEntity = this.GetCacheKey("TypeName", new string[] { key1, key2 });
+var result = this.DataCacheService.GetRedisCacheData<T>(
+    cacheKeyEntity.ServiceName,
+    cacheKeyEntity.TypeName,
+    cacheKeyEntity.Key,
+    () => {
+        // 快取未命中時的處理邏輯
+        return fetchData();
+    },
+    expirationSeconds: 900, // 15 分鐘
+    enableCache: true,
+    cleanCache: false
+);
+```
+
+**快取策略**：
+- **快取 Key 格式**：[待補充]
+- **過期時間**：[待補充：秒數]
+- **更新策略**：[待補充：主動更新 / 被動失效]
+- **快取穿透防護**：[待補充：是否有防護機制]
+
+---
+
+#### 3.6.2 快取 Key 管理 (Cache Key Management)
+[待補充：快取 Key 的生成與管理邏輯]
+
+**CacheKey 結構**：
+```
+ServiceName:TypeName-Version:Key
+例如：SalePageV2:SalePageV2ProcessContext-2023121401:100-12345-secret-Web-0
+```
+
+**版本控制**：
+- [待補充：如何管理快取版本]
 
 ---
 
@@ -449,9 +574,6 @@ const data = await response.json();
 - [ ] **非同步處理**：是否有長時間執行的操作？是否已改為非同步處理以避免阻塞？
 - [ ] **回應壓縮**：是否已啟用 Gzip 等回應壓縮機制？
 
-**優化建議：**
-- [待補充：具體的優化方案]
-
 ---
 
 ### 6.2 安全性評估
@@ -478,35 +600,58 @@ const data = await response.json();
 - 敏感資訊不應暴露在錯誤訊息中
 - 系統錯誤應記錄日誌
 
-**日誌記錄：**
+**異常類型**：
+- `[ExceptionType]` - [待補充：處理方式]
+
+**錯誤處理範例**：
+```csharp
+try
+{
+    // 業務邏輯
+}
+catch (WebException ex)
+{
+    var msg = $"外部服務異常：{ex.Message}";
+    this.Logger.Error(msg);
+    throw new ServiceException(msg, ex);
+}
+catch (Exception ex)
+{
+    this.Logger.Error(ex.ToString());
+    throw;
+}
+```
+
+**日誌記錄**：
 - [待補充：日誌記錄策略]
 
 ---
 
 ## 7. 📋 品質檢查清單 (Quality Checklist)
 
-### ⭐ 基礎框架 (1-40%)
-- [ ] 文件元數據完整（日期、品質等級）
-- [ ] API 基本資訊完整
-- [ ] 請求規格已定義
-- [ ] 回應規格已定義
+### ⭐ 基礎框架級 (Foundation Level)
+- [ ] **1.1 📂 分析檔案資訊**：至少一個被分析的檔案路徑已填寫。
+- [ ] **3.1 API 基本資訊**：端點定義與認證授權方式已填寫完整。
+- [ ] **3.2 請求規格**：路徑、查詢、主體等請求規格已定義。
+- [ ] **3.3 回應規格**：成功與錯誤的回應結構皆已定義。
 
-### ⭐⭐⭐ 邏輯完成 (41-70%)
-- [ ] 業務流程圖已繪製
-- [ ] 資料驗證規則已定義
-- [ ] 範例程式碼已提供
+### ⭐⭐ 核心邏輯級 (Core Logic Level)
+- [ ] **1.2 📦 依賴關係**：後端依賴關係表已填寫。
+- [ ] **3.4.0 核心 Controller 方法**：Controller 的核心方法程式碼已貼上。
+- [ ] **3.4.1 核心流程**：業務邏輯的 Mermaid 流程圖已繪製完成。
+- [ ] **3.5 資料模型轉換**：DTO 與業務模型之間的轉換邏輯已說明。
 
-### ⭐⭐⭐⭐ 架構完整 (71-90%)
-- [ ] **依賴關係表已完成**
-- [ ] **所有依賴項都已建立分析檔案**
-- [ ] 效能考量已分析
-- [ ] 安全性檢查已完成
+### ⭐⭐⭐ 整合分析級 (Integration Analysis Level)
+- [ ] **3.4.2 資料存取層調用**：所有 Repository/DAL 的調用皆已列表說明。
+- [ ] **3.4.3 其他服務調用**：所有內部服務的調用皆已列表說明。
+- [ ] **3.6 快取策略分析**：後端的快取機制、Key 格式、過期策略皆已詳細描述。
+- [ ] **4. 前端調用封裝**：前端 Service 的封裝、錯誤處理、快取策略皆已提供程式碼範例。
 
-### ⭐⭐⭐⭐⭐ 完整分析 (91-100%)
-- [ ] 測試案例完整
-- [ ] 效能優化建議具體
-- [ ] 安全性評估完整
-- [ ] 錯誤處理策略明確
+### ⭐⭐⭐⭐ 架構品質級 (Architecture Quality Level)
+- [ ] **5.2 測試案例**：正常與異常流程的測試案例皆已定義。
+- [ ] **6.1 效能考量**：效能檢查清單已完成評估。
+- [ ] **6.2 安全性評估**：安全性檢查清單已完成評估。
+- [ ] **6.3 錯誤處理策略**：後端的錯誤處理原則、範例與日誌策略皆已說明。
 
 ---
 

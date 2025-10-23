@@ -182,7 +182,7 @@ if [[ -z "$TYPE" ]]; then
 fi
 
 # Validate type
-VALID_TYPES=("server" "client" "feature" "api" "request-pipeline" "component" "helper")
+VALID_TYPES=("server" "client" "feature" "api" "request-pipeline" "helper")
 if [[ ! " ${VALID_TYPES[@]} " =~ " ${TYPE} " ]]; then
     log_error "Error: Invalid type '$TYPE'." >&2
     log_error "Valid types: ${VALID_TYPES[*]}" >&2
@@ -193,8 +193,7 @@ fi
 check_analysis_branch "$CURRENT_BRANCH" || exit 1
 
 # --- Determine Category and Target Directory ---
-CATEGORY=$(get_file_category "$TYPE")
-TARGET_DIR=$(get_target_directory "$TOPIC_DIR" "$SHARED_DIR" "$TYPE")
+TARGET_DIR=$(get_target_directory "$TOPIC_DIR" "$TYPE")
 
 if [[ -z "$TARGET_DIR" ]]; then
     log_error "Could not determine target directory for type: $TYPE" >&2
@@ -255,18 +254,18 @@ rm -f "${FILE_PATH}.bak"
 log_success "Created: $FILE_PATH"
 
 # --- Register in overview.md ---
-if [[ "$CATEGORY" == "shared" ]]; then
-    OVERVIEW_FILE="$SHARED_DIR/overview.md"
-    RELATIVE_PATH="./${TYPE#shared-}/${FILE_NAME}"
-else
-    OVERVIEW_FILE="$TOPIC_DIR/overview.md"
-    if [[ "$TYPE" == "server" || "$TYPE" == "client" ]]; then
-        RELATIVE_PATH="./${FILE_NAME}"
-    elif [[ "$TYPE" == "feature" ]]; then
-        RELATIVE_PATH="./features/${FILE_NAME}"
-    elif [[ "$TYPE" == "api" ]]; then
-        RELATIVE_PATH="./apis/${FILE_NAME}"
-    fi
+OVERVIEW_FILE="$TOPIC_DIR/overview.md"
+
+if [[ "$TYPE" == "server" || "$TYPE" == "client" ]]; then
+    RELATIVE_PATH="./${FILE_NAME}"
+elif [[ "$TYPE" == "feature" ]]; then
+    RELATIVE_PATH="./features/${FILE_NAME}"
+elif [[ "$TYPE" == "api" ]]; then
+    RELATIVE_PATH="./apis/${FILE_NAME}"
+elif [[ "$TYPE" == "helper" ]]; then
+    RELATIVE_PATH="./helpers/${FILE_NAME}"
+elif [[ "$TYPE" == "request-pipeline" ]]; then
+    RELATIVE_PATH="./request-pipeline/${FILE_NAME}"
 fi
 
 # Update overview.md
@@ -290,7 +289,6 @@ if [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
     # Categorize Files by Role
     VIEW_FILES=()
     CONTROLLER_FILES=()
-    COMPONENT_FILES=()
     API_FILES=()
     SERVICE_FILES=()
     

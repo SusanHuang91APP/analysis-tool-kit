@@ -30,7 +30,6 @@ echo "  TEMPLATES_DIR:       $TEMPLATES_DIR"
 echo ""
 echo "Analysis Structure:"
 echo "  ANALYSIS_BASE_DIR:   $ANALYSIS_BASE_DIR"
-echo "  SHARED_DIR:          $SHARED_DIR"
 echo "  TOPIC_DIR:           $TOPIC_DIR"
 echo ""
 echo "Key Files:"
@@ -38,9 +37,6 @@ if [[ -d "$TOPIC_DIR" ]]; then
     echo "  Topic Overview:      $TOPIC_DIR/overview.md"
     [[ -f "$TOPIC_DIR/server.md" ]] && echo "  Topic Server:        $TOPIC_DIR/server.md"
     [[ -f "$TOPIC_DIR/client.md" ]] && echo "  Topic Client:        $TOPIC_DIR/client.md"
-fi
-if [[ -d "$SHARED_DIR" ]]; then
-    echo "  Shared Overview:     $SHARED_DIR/overview.md"
 fi
 echo ""
 echo "Directory Structure Status:"
@@ -65,19 +61,6 @@ else
     echo "  ✗ Analysis base directory does not exist"
 fi
 
-# Check shared structure
-echo ""
-if [[ -d "$SHARED_DIR" ]]; then
-    echo "  ✓ Shared directory exists"
-    [[ -d "$SHARED_DIR/request-pipeline" ]] && echo "    ✓ request-pipeline/"
-    [[ -d "$SHARED_DIR/components" ]] && echo "    ✓ components/"
-    [[ -d "$SHARED_DIR/helpers" ]] && echo "    ✓ helpers/"
-    [[ -f "$SHARED_DIR/overview.md" ]] && echo "    ✓ overview.md"
-else
-    echo "  ✗ Shared directory does not exist"
-    echo "    Run /analysis.init to create it"
-fi
-
 # Check current topic structure
 echo ""
 if [[ -d "$TOPIC_DIR" ]]; then
@@ -87,6 +70,9 @@ if [[ -d "$TOPIC_DIR" ]]; then
     [[ -f "$TOPIC_DIR/client.md" ]] && echo "    ✓ client.md"
     [[ -d "$TOPIC_DIR/features" ]] && echo "    ✓ features/"
     [[ -d "$TOPIC_DIR/apis" ]] && echo "    ✓ apis/"
+    [[ -d "$TOPIC_DIR/components" ]] && echo "    ✓ components/"
+    [[ -d "$TOPIC_DIR/helpers" ]] && echo "    ✓ helpers/"
+    [[ -d "$TOPIC_DIR/request-pipeline" ]] && echo "    ✓ request-pipeline/"
     
     # Count feature and api files
     if [[ -d "$TOPIC_DIR/features" ]]; then
