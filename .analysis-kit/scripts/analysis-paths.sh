@@ -106,7 +106,6 @@ if [[ -d "$TEMPLATES_DIR" ]]; then
         "client-template.md"
         "feature-template.md"
         "api-template.md"
-        "component-template.md"
         "helper-template.md"
         "request-pipeline-template.md"
     )

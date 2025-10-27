@@ -182,7 +182,7 @@ if [[ -z "$TYPE" ]]; then
 fi
 
 # Validate type
-VALID_TYPES=("server" "client" "feature" "api" "request-pipeline" "helper")
+VALID_TYPES=("server" "client" "feature" "api" "request-pipeline" "helper" "component")
 if [[ ! " ${VALID_TYPES[@]} " =~ " ${TYPE} " ]]; then
     log_error "Error: Invalid type '$TYPE'." >&2
     log_error "Valid types: ${VALID_TYPES[*]}" >&2
@@ -205,6 +205,10 @@ mkdir -p "$TARGET_DIR"
 
 # --- Determine Template ---
 TEMPLATE_FILE="$TEMPLATES_DIR/${TYPE}-template.md"
+if [[ "$TYPE" == "component" ]]; then
+    TEMPLATE_FILE="$TEMPLATES_DIR/feature-template.md"
+fi
+
 if [[ ! -f "$TEMPLATE_FILE" ]]; then
     log_error "Template not found: $TEMPLATE_FILE" >&2
     exit 1
@@ -266,6 +270,8 @@ elif [[ "$TYPE" == "helper" ]]; then
     RELATIVE_PATH="./helpers/${FILE_NAME}"
 elif [[ "$TYPE" == "request-pipeline" ]]; then
     RELATIVE_PATH="./request-pipeline/${FILE_NAME}"
+elif [[ "$TYPE" == "component" ]]; then
+    RELATIVE_PATH="./components/${FILE_NAME}"
 fi
 
 # Update overview.md

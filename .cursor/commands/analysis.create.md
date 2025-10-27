@@ -10,7 +10,7 @@ scripts:
 使用者參數格式：`[type] <source-files...>`
 
 - **`type`** (選填): 指定分析類型
-  - `server` | `client` | `feature` | `api` | `request-pipeline` | `helper`
+  - `server` | `client` | `feature` | `api` | `request-pipeline` | `helper` | `component`
   
 - **`source-files...`** (必填): 一個或多個原始碼檔案路徑
   - 支援: `.cshtml`, `.cs`, `.tsx`, `.jsx`, `.ts`, `.js`, `.vue`
@@ -79,7 +79,7 @@ flowchart TD
 - 若未提供，回報錯誤並結束
 
 **驗證 type（若提供）**:
-- 檢查是否為合法類型：`server` | `client` | `feature` | `api` | `request-pipeline` | `helper`
+- 檢查是否為合法類型：`server` | `client` | `feature` | `api` | `request-pipeline` | `helper` | `component`
 - 若無效，回報錯誤並結束
 
 **讀取檔案基本資訊**:
@@ -106,7 +106,7 @@ flowchart TD
 *Controller.cs           → Controller
 *Service.cs/*Repository  → Service (建議 api 類型)
 *Filter.cs/*Middleware   → Filter/Middleware
-.tsx/.jsx/.vue          → Component (建議 feature 類型)
+.tsx/.jsx/.vue          → Component (建議 component 類型)
 */api/*.ts/*.js         → API Route
 *Helper.ts/*Util.ts     → Utility
 ```
@@ -120,7 +120,7 @@ flowchart TD
 **命名模式判斷**:
 - 檔名含 Detail/List/Index + .cshtml → 建議 `client`
 - *Controller.cs (非 api) → 建議 `server`
-- 多個相關檔案 → 建議 `feature`
+- 多個相關檔案 → 建議 `feature`、`component`
 
 **共用性判斷** (決定 Topic vs Shared):
 - 所有類型 (`component`, `helper` 等) 現在都建立在當前的 Topic 目錄下
@@ -348,6 +348,7 @@ flowchart TD
 | `api` | Topic/apis/ | api-template.md | API 規格 |
 | `request-pipeline` | Topic/request-pipeline/ | request-pipeline-template.md | Filter/Middleware |
 | `helper` | Topic/helpers/ | helper-template.md | 輔助函式 |
+| `component` | Topic/components/ | feature-template.md | 共用元件 |
 
 ---
 
@@ -359,7 +360,7 @@ flowchart TD
    - 錯誤訊息：「必須提供至少一個原始碼檔案」
    
 2. **type 無效**: 
-   - 錯誤訊息：「無效的類型，請使用: server, client, feature, api, request-pipeline, helper」
+   - 錯誤訊息：「無效的類型，請使用: server, client, feature, api, request-pipeline, helper, component」
 
 3. **檔案不存在**: 
    - 錯誤訊息：「找不到檔案: <path>」

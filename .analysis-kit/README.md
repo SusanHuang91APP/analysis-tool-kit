@@ -39,7 +39,6 @@ Analysis Tool Kit V2 是一個專為程式碼分析和架構文檔生成設計�
     ├── client-template.md       # 前端分析範本
     ├── feature-template.md      # 功能分析範本
     ├── api-template.md          # API 規格範本
-    ├── component-template.md    # 元件分析範本
     ├── helper-template.md       # 輔助函式範本
     └── request-pipeline-template.md  # Pipeline 範本
 ```
@@ -204,7 +203,6 @@ analysis/
 
 #### Shared 範本
 - **`request-pipeline-template.md`** - Filter/Middleware 分析範本
-- **`component-template.md`** - 共用 UI 元件分析範本
 - **`helper-template.md`** - 共用輔助函式分析範本
 
 #### 系統範本
