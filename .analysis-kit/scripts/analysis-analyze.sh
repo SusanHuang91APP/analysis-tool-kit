@@ -55,6 +55,7 @@ process_analysis_file() {
         "$TOPIC_DIR/features"
         "$TOPIC_DIR/apis"
         "$TOPIC_DIR/helpers"
+        "$TOPIC_DIR/components"
         "$TOPIC_DIR/request-pipeline"
     )
 
