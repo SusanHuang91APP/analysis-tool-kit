@@ -216,7 +216,13 @@ fi
 
 # --- Infer Filename ---
 if [[ -n "$NAME" ]]; then
-    INFERRED_NAME=$(echo "$NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+    if [[ "$TYPE" == "api" || "$TYPE" == "helper" || "$TYPE" == "request-pipeline" || "$TYPE" == "component" ]]; then
+        # Use PascalCase name directly
+        INFERRED_NAME="$NAME"
+    else
+        # For other types (like feature with Chinese name), convert spaces to hyphens and ensure lowercase for any accidental English characters.
+        INFERRED_NAME=$(echo "$NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+    fi
 elif [[ ${#SOURCE_FILES[@]} -gt 0 ]]; then
     INFERRED_NAME=$(infer_filename_from_sources "${SOURCE_FILES[@]}")
 else

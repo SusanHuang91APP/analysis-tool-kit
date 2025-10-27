@@ -1,6 +1,6 @@
 # __NAME__ - Helper Analysis
 
-> **🎯 分析品質**：⭐ 基礎框架 (0%)  
+> **🎯 分析品質**：⭐ 基礎框架  
 > **📅 開始日期**：__CURRENT_DATE__  
 > **📅 最後更新**：__CURRENT_DATE__  
 > **🔗 相關文件**：[連結到 shared/overview.md](../overview.md)
@@ -391,5 +391,5 @@ describe('functionName', () => {
 
 ---
 
-**當前品質等級**：⭐ 基礎框架 (0%)
+**當前品質等級**：⭐ 基礎框架
 
