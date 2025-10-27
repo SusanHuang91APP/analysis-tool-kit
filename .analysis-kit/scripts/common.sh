@@ -109,6 +109,7 @@ ensure_topic_structure() {
     mkdir -p "$topic_dir/apis"
     mkdir -p "$topic_dir/request-pipeline"
     mkdir -p "$topic_dir/helpers"
+    mkdir -p "$topic_dir/components"
 }
 
 # Get target directory based on type, always within the topic
@@ -132,6 +133,9 @@ get_target_directory() {
             ;;
         helper)
             echo "$topic_dir/helpers"
+            ;;
+        component)
+            echo "$topic_dir/components"
             ;;
         *)
             echo ""
