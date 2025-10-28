@@ -282,7 +282,7 @@ fi
 
 # Update overview.md
 if [[ -f "$OVERVIEW_FILE" ]]; then
-    update_overview_manifest "$OVERVIEW_FILE" "$FILE_NAME" "$RELATIVE_PATH" "📝 待分析"
+    update_overview_manifest "$OVERVIEW_FILE" "$FILE_NAME" "$RELATIVE_PATH" "📝 待分析" "$TYPE"
 else
     log_warning "Overview file not found: $OVERVIEW_FILE"
 fi

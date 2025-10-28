@@ -162,37 +162,82 @@ calculate_quality_level() {
 }
 
 # Update overview.md manifest with new file entry
-# Usage: update_overview_manifest "$overview_file" "$file_name" "$file_path" "$quality_level"
+# Usage: update_overview_manifest "$overview_file" "$file_name" "$file_path" "$quality_level" "$type"
 update_overview_manifest() {
     local overview_file="$1"
     local file_name="$2"
     local relative_path="$3"
     local quality_level="${4:-📝 待分析}"
+    local type="$5"
     
     if [[ ! -f "$overview_file" ]]; then
         log_error "Overview file not found: $overview_file"
         return 1
     fi
     
-    # Check if entry already exists
+    # Check if entry already exists to prevent duplicates
     if grep -q "| \[$file_name\]" "$overview_file"; then
         log_info "Entry already exists in overview.md: $file_name"
         return 0
     fi
     
-    # Find the table and add new entry
-    # Look for the line after "| 檔案 | 品質等級 |" or "|------|----------|"
-    local table_marker="|------|----------|"
+    local header=""
+    case "$type" in
+        server|client)
+            header="### Client/Server"
+            ;;
+        feature)
+            header="#### Features"
+            ;;
+        component)
+            header="#### Components"
+            ;;
+        helper)
+            header="#### Helpers"
+            ;;
+        api)
+            header="### API"
+            ;;
+        "request-pipeline")
+            header="### Request Pipeline"
+            ;;
+        *)
+            # Fallback for unknown types or old overview files
+            header=""
+            ;;
+    esac
+
+    local new_entry="| [$file_name]($relative_path) | $quality_level |"
+    local table_marker_pattern='|------|----------|'
     
-    if grep -q "$table_marker" "$overview_file"; then
-        # Add entry after table header
-        sed -i.bak "/$table_marker/a\\
-| [$file_name]($relative_path) | $quality_level |
+    if [[ -n "$header" ]] && grep -q "$header" "$overview_file"; then
+        # Find the line number of the header
+        local header_line=$(grep -n "$header" "$overview_file" | cut -d: -f1)
+        
+        # Find the first table marker after the header
+        # The awk script finds the marker and prints its line number, then exits.
+        local marker_line=$(awk -v h=$header_line 'NR > h && /\|------\|----------\|/ {print NR; exit}' "$overview_file")
+        
+        if [[ -n "$marker_line" ]]; then
+            # Insert the new entry after the specific table marker
+            sed -i.bak "${marker_line}a\\
+${new_entry}
+" "$overview_file"
+            rm -f "${overview_file}.bak"
+            log_success "Added entry to '$header' section in overview.md: $file_name"
+            return 0
+        fi
+    fi
+    
+    # Fallback: if no specific header is found, add to the first table
+    if grep -q "$table_marker_pattern" "$overview_file"; then
+        sed -i.bak "/${table_marker_pattern}/a\\
+${new_entry}
 " "$overview_file"
         rm -f "${overview_file}.bak"
-        log_success "Added entry to overview.md: $file_name"
+        log_success "Added entry to overview.md (fallback): $file_name"
     else
-        log_warning "Could not find table marker in overview.md"
+        log_warning "Could not find any table marker in overview.md"
         return 1
     fi
 }
