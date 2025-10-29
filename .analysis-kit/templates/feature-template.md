@@ -1,10 +1,5 @@
 # __NAME__ - Feature Analysis
 
-> **🎯 分析品質**：⭐ 基礎框架  
-> **📅 開始日期**：__CURRENT_DATE__  
-> **📅 最後更新**：__CURRENT_DATE__  
-> **🔗 相關文件**：[連結到 overview.md](../overview.md)
-
 ---
 
 ## 1. 📝 核心摘要與依賴 (Core Summary & Dependencies)
