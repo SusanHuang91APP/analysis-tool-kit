@@ -38,5 +38,5 @@ out/
 logs/
 
 !.cursor/commands
-.cursor
 analysis/
+refactors/
