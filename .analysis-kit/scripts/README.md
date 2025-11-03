@@ -12,7 +12,8 @@
 ├── analysis-create.sh        # 建立分析檔案
 ├── analysis-analyze.sh       # 深度分析更新
 ├── analysis-deps.sh          # 更新依賴關係
-└── analysis-paths.sh         # 路徑除錯工具
+├── analysis-paths.sh         # 路徑除錯工具
+└── refactor-doc.sh           # 建立重構規格文件
 ```
 
 ## 🔧 核心腳本
@@ -249,6 +250,49 @@ Directory Structure Status:
 
 ---
 
+### 8. refactor-doc.sh
+**性質：** 重構規格文件生成器
+
+**功能：**
+- 從 legacy 分析檔案創建重構規格文件
+- 自動計算 `refactors/` 目錄的序號
+- 從分析檔案推導功能名稱
+- 複製並填充 refactor template
+- 輸出環境變數供 AI 填充內容
+
+**支援類型：**
+- 單一分析檔案
+- 多個分析檔案（用於合併多個功能的重構規格）
+
+**執行範例：**
+```bash
+# 從單一分析檔案創建重構規格
+./refactor-doc.sh analysis/001-topic/features/002-MediaGallery.md
+
+# 從多個分析檔案創建重構規格
+./refactor-doc.sh \
+  analysis/001-topic/features/002-MediaGallery.md \
+  analysis/001-topic/features/005-MediaCarousel.md
+```
+
+**輸出：**
+```json
+{
+  "REFACTOR_DOC_FILE": "refactors/001-media-gallery-refactor.md",
+  "LEGACY_ANALYSIS_FILES": "002-MediaGallery.md 005-MediaCarousel.md",
+  "CONSTITUTION_FILE": ".analysis-kit/memory/refactor-constitution.md"
+}
+```
+
+**檔名規則：**
+- 從第一個分析檔案提取名稱
+- 移除序號前綴（`002-MediaGallery.md` → `MediaGallery`）
+- 轉換為 kebab-case（`MediaGallery` → `media-gallery`）
+- 添加 `-refactor` 後綴
+- 加上自動序號：`001-media-gallery-refactor.md`
+
+---
+
 ## 🔄 Scripts 執行順序
 
 典型的分析流程：
@@ -304,7 +348,7 @@ graph TD
 
 ## 📚 相關文件
 
-- **V2 架構文件：** `.cursor/docs/Analysis Tool V2.md`
+- **V2 架構文件：** `.cursor/refactors/Analysis Tool V2.md`
 - **範本目錄：** `.analysis-kit/templates/`
 - **分析憲法：** `.analysis-kit/memory/constitution.md`
 

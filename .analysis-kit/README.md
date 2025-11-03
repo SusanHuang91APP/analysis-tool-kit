@@ -470,7 +470,6 @@ graph TD
 ## 📚 延伸閱讀
 
 ### 核心文件
-- **[V2 架構文件](.cursor/docs/Analysis Tool V2.md)** - 完整的 V2 架構說明
 - **[Scripts 說明](scripts/README.md)** - 腳本詳細技術文檔
 - **[指令說明](.cursor/commands/README.md)** - Cursor AI 指令使用指南
 - **[分析憲法](memory/constitution.md)** - 分析規則和標準

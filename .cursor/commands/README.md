@@ -322,16 +322,6 @@ A: 多次執行 `/analysis.analyze` 提供更多原始碼或優化現有內容
 
 ---
 
-## 🔗 相關資源
-
-- **V2 架構文件：** `.cursor/docs/Analysis Tool V2.md`
-- **腳本說明：** `.analysis-kit/scripts/README.md`
-- **快速參考：** `.analysis-kit/QUICK_REFERENCE.md`
-- **分析憲法：** `.analysis-kit/memory/constitution.md`
-- **範本目錄：** `.analysis-kit/templates/`
-
----
-
 ## 📚 指令設計原則
 
 1. **腳本優先：** 環境驗證和檔案操作由腳本執行
