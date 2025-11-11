@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
 # Create refactor specification documents from legacy analysis files
-# Usage: ./refactor-doc.sh [<target-file>] <analysis-files...>
+# Usage: ./refactor-plan.sh [<target-file>] <analysis-files...>
 #
 # Supports two formats:
-#   Format 1: ./refactor-doc.sh <analysis-files...>
+#   Format 1: ./refactor-plan.sh <analysis-files...>
 #     - Auto-generates target file in refactors/ directory
-#   Format 2: ./refactor-doc.sh <target-file> <analysis-files...>
+#   Format 2: ./refactor-plan.sh <target-file> <analysis-files...>
 #     - Uses specified target file path
 #
 set -e
@@ -24,43 +24,42 @@ show_help() {
     echo ""
     echo "  Format 1 (Auto-generate):"
     echo "    $0 <analysis-files...>"
-    echo "    - Auto-generates target file in refactors/ directory"
-    echo "    - Example: $0 analysis/001-topic/features/002-MediaGallery.md"
+    echo "    - Maps analysis/**/*.md to refactors/**/*.md (preserves directory structure)"
+    echo "    - Example: $0 analysis/001-salepage/features/004-商品基本資訊與標籤.md"
+    echo "    - Creates: refactors/001-salepage/features/004-商品基本資訊與標籤.md"
     echo ""
     echo "  Format 2 (Specify target):"
     echo "    $0 <target-file> <analysis-files...>"
     echo "    - Uses specified target file path"
-    echo "    - Example: $0 refactors/001-media-gallery.md analysis/001-topic/features/002-MediaGallery.md"
+    echo "    - Example: $0 refactors/custom/path/my-refactor.md analysis/001-salepage/features/004-商品基本資訊與標籤.md"
     echo ""
     echo "Arguments:"
     echo "  <target-file> (optional)  Target refactor document path (Format 2)"
     echo "  <analysis-files...>       One or more analysis markdown files to refactor"
     echo ""
     echo "Output:"
-    echo "  Creates refactors/###-<name>.md and outputs environment variables for AI"
+    echo "  Creates refactors/**/*.md (preserving directory structure) and outputs environment variables for AI"
 }
 
-# --- Extract name from analysis filename ---
-extract_feature_name() {
+# --- Map analysis path to refactor path ---
+extract_refactor_path() {
+    local analysis_file="$1"
+    # Remove "analysis/" prefix and prepend "refactors/"
+    echo "$analysis_file" | sed 's|^analysis/|refactors/|'
+}
+
+# --- Extract display name from filename for template ---
+extract_display_name() {
     local file_path="$1"
     local filename=$(basename "$file_path")
     
     # Remove .md extension
     local name="${filename%.md}"
     
-    # Remove number prefix (e.g., "002-MediaGallery" -> "MediaGallery")
+    # Remove number prefix (e.g., "004-商品基本資訊與標籤" -> "商品基本資訊與標籤")
     name=$(echo "$name" | sed 's/^[0-9]*-//')
     
     echo "$name"
-}
-
-# --- Convert name to kebab-case ---
-to_kebab_case() {
-    local name="$1"
-    
-    # Convert PascalCase/camelCase to kebab-case
-    # Insert hyphen before uppercase letters, then lowercase everything
-    echo "$name" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1-\2/g' | tr '[:upper:]' '[:lower:]'
 }
 
 # --- Detect format and parse arguments ---
@@ -187,35 +186,25 @@ if [[ -n "$TARGET_FILE" ]]; then
     
     # Extract name from target file for template placeholder replacement
     TARGET_BASENAME=$(basename "$OUTPUT_FILE" .md)
-    # Remove number prefix if exists (e.g., "001-media-gallery" -> "media-gallery")
-    EXTRACTED_NAME=$(echo "$TARGET_BASENAME" | sed 's/^[0-9]*-//')
+    # Remove number prefix if exists (e.g., "004-商品基本資訊與標籤" -> "商品基本資訊與標籤")
+    EXTRACTED_NAME=$(extract_display_name "$OUTPUT_FILE")
 else
-    # Format 1: Auto-generate target file
-    REFACTORS_DIR="$KIT_PARENT_DIR/refactors"
-    mkdir -p "$REFACTORS_DIR"
-    
-    # Calculate next file number
-    NEXT_NUM=$(get_next_file_number "$REFACTORS_DIR")
-    FORMATTED_NUM=$(format_number "$NEXT_NUM" 3)
-    
-    log_info "Next document number: $FORMATTED_NUM"
-    
-    # Extract and format name from first analysis file
+    # Format 1: Auto-generate target file by mapping analysis/ to refactors/
     FIRST_FILE="${ANALYSIS_FILES[0]}"
-    EXTRACTED_NAME=$(extract_feature_name "$FIRST_FILE")
-    KEBAB_NAME=$(to_kebab_case "$EXTRACTED_NAME")
     
-    # Use kebab-case name directly (no suffix)
-    FINAL_NAME="${KEBAB_NAME}"
+    # Map analysis path to refactor path
+    REFACTOR_PATH=$(extract_refactor_path "$FIRST_FILE")
+    OUTPUT_FILE="$KIT_PARENT_DIR/$REFACTOR_PATH"
     
-    log_info "Extracted name: $EXTRACTED_NAME"
-    log_info "Formatted name: $FINAL_NAME"
+    # Create directory structure if it doesn't exist
+    OUTPUT_DIR=$(dirname "$OUTPUT_FILE")
+    mkdir -p "$OUTPUT_DIR"
     
-    # Create output filename
-    OUTPUT_FILENAME="${FORMATTED_NUM}-${FINAL_NAME}.md"
-    OUTPUT_FILE="$REFACTORS_DIR/$OUTPUT_FILENAME"
-    
+    log_info "Mapping: $FIRST_FILE -> $REFACTOR_PATH"
     log_info "Output file: $OUTPUT_FILE"
+    
+    # Extract display name for template placeholder replacement
+    EXTRACTED_NAME=$(extract_display_name "$FIRST_FILE")
 fi
 
 # --- Check if template exists ---

@@ -23,16 +23,11 @@
 
 ## 2. 📋 分析指引 (Analysis Guidelines)
 
-**分析目標：**
-分析工具函式/類別。專注：函式簽名、核心邏輯、邊界處理、純函式檢查、使用文檔。
+**目標：** 分析工具函式/類別（函式簽名、核心邏輯、邊界處理、純函式檢查、使用文檔）
 
-**核心規則：**
-- 章節結構不變：禁止新增或刪除預設章節
-- 來源檔案限定：只分析 1.1 節列出的檔案
-- 依賴註記：未分析的依賴記錄在 1.2 節
-- 程式碼真實性：禁止使用 `...` 省略或編造內容
-- 品質清單不變：僅更新勾選狀態 `[ ]` -> `[x]`
-
+**規則：**
+- 章節結構不變 | 來源限定 1.1 節 | 依賴記錄於 1.2 節
+- 程式碼真實性：禁止 `...` 省略或編造 | 品質清單：僅更新勾選狀態
 ---
 
 ## 3. Helper 基本資訊 (Helper Information)
@@ -285,37 +280,6 @@ function genericFunction<T>(param: T): T {
 
 ---
 
-### 7.4 測試覆蓋率
-
-[待補充：說明測試策略]
-
-**測試策略：**
-- [ ] 單元測試（正常流程）
-- [ ] 邊界條件測試
-- [ ] 錯誤處理測試
-- [ ] 效能測試
-
-**測試範例：**
-```typescript
-describe('functionName', () => {
-    it('should return correct result for valid input', () => {
-        const result = functionName(validInput);
-        expect(result).toBe(expectedOutput);
-    });
-    
-    it('should throw error for invalid input', () => {
-        expect(() => functionName(invalidInput)).toThrow();
-    });
-    
-    it('should handle edge cases', () => {
-        const result = functionName(edgeCaseInput);
-        expect(result).toBe(expectedEdgeOutput);
-    });
-});
-```
-
----
-
 ## 8. 文檔與註解 (Documentation)
 
 ### 8.1 JSDoc 註解
@@ -379,7 +343,6 @@ describe('functionName', () => {
 - [ ] **6. 使用範例**：提供基本、進階、以及常見陷阱的程式碼範例。
 - [ ] **7.1 效能分析**：效能檢查清單已完成評估。
 - [ ] **7.2 純函式檢查**：純函式檢查清單已完成評估。
-- [ ] **7.4 測試覆蓋率**：測試策略與測試範例已提供。
 
 ### ⭐⭐⭐⭐ 架構品質級 (Architecture & Quality Level)
 - [ ] **完整性**：文件內所有 `[待補充]` 標記皆已移除，並替換為基於原始碼的真實分析內容。

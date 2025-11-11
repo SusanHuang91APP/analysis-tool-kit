@@ -25,16 +25,11 @@
 
 ## 2. 📋 分析指引 (Analysis Guidelines)
 
-**分析目標：**
-分析前端 API Service 封裝實作。專注：職責定義、Endpoint 規格、實作邏輯、錯誤處理、依賴追蹤。
+**目標：** 分析前端 API Service 封裝實作（職責定義、Endpoint 規格、實作邏輯、錯誤處理、依賴追蹤）
 
-**核心規則：**
-- 章節結構不變：禁止新增或刪除預設章節
-- 來源檔案限定：只分析 1.1 節列出的檔案
-- 依賴註記：未分析的依賴記錄在 1.2 節
-- 程式碼真實性：禁止使用 `...` 省略或編造內容
-- 品質清單不變：僅更新勾選狀態 `[ ]` -> `[x]`
-
+**規則：**
+- 章節結構不變 | 來源限定 1.1 節 | 依賴記錄於 1.2 節
+- 程式碼真實性：禁止 `...` 省略或編造 | 品質清單：僅更新勾選狀態
 ---
 
 ## 3. 🔧 Service 總體分析 (Overall Service Analysis)
@@ -45,43 +40,21 @@
 
 ### 3.2 錯誤處理策略 (Error Handling Strategy)
 
-[待補充：說明統一錯誤處理邏輯、錯誤分類、使用者通知、日誌記錄方式]
+[待補充：說明此 Service 的錯誤處理實作方式]
 
-**錯誤處理流程圖** (Mermaid):
+**錯誤處理特點**：
+- [待補充：如 Promise 包裝、錯誤上拋、統一攔截器等]
+
+**錯誤處理流程圖**（可選，僅在複雜處理邏輯時使用）：
 ```mermaid
 graph TD
-    A[API 調用失敗] --> B{錯誤類型}
-    B -->|401 Unauthorized| C[執行登出邏輯]
-    C --> D[導向登入頁]
-    B -->|403 Forbidden| E[顯示權限不足提示]
-    B -->|400/422 Validation Error| F[顯示具體的欄位錯誤訊息]
-    B -->|5xx Server Error| G[顯示通用系統錯誤提示]
-    B -->|Network Error| H[顯示網路連線失敗提示]
+    A[API 調用] --> B{錯誤類型}
+    B -->|401| C[處理方式]
 ```
 
-**程式碼範例:**
+**程式碼範例**（若有統一錯誤處理）：
 ```typescript
-// [待補充：完整實際程式碼，禁止使用 ... 省略]
-function handleError(error: any): void {
-    if (error.response) {
-        const { status, data } = error.response;
-        switch (status) {
-            case 401:
-                // Handle unauthorized
-                break;
-            case 403:
-                // Handle forbidden
-                break;
-            default:
-                // Handle other errors
-                break;
-        }
-    } else if (error.request) {
-        // Handle network error
-    } else {
-        // Handle client-side error
-    }
-}
+// [待補充：貼上實際錯誤處理程式碼，若無統一處理則省略此區塊]
 ```
 
 ---
@@ -128,6 +101,10 @@ interface UpdateUserRequest {
 ```
 
 #### 4.1.2 回應規格 (Response Specification)
+
+> **📌 格式建議：**
+> - 簡單回應（boolean/string/number/null）：直接說明值的意義
+> - 複雜回應（Object/Array）：使用完整的欄位說明表格
 
 **成功回應:** `200 OK`
 ```typescript
@@ -189,21 +166,7 @@ async function getUserProfile(userId: string): Promise<UserProfile> {
 
 ---
 
-## 5. 🧪 測試案例 (Test Cases)
-
-[待補充：說明 Service 的測試策略]
-
-**主要測試案例：**
-
-| 案例描述 | 前提條件 | 步驟 | 預期結果 |
-|----------|----------|------|----------|
-| 成功取得資料 | API Server 正常 | 1. 調用 `getUserProfile('user-123')` <br/> 2. Mock API 回傳成功資料 | 1. 方法回傳正確的使用者物件 <br/> 2. 沒有觸發錯誤處理 |
-| API 回傳 404 | API Server 正常 | 1. 調用 `getUserProfile('user-999')` <br/> 2. Mock API 回傳 404 錯誤 | 1. 方法拋出例外 <br/> 2. `handleError` 被調用且參數為 404 錯誤 |
-| 網路連線失敗 | API Server 無法連線 | 1. 調用 `getUserProfile('user-123')` <br/> 2. Mock API 模擬網路錯誤 | 1. 方法拋出例外 <br/> 2. `handleError` 被調用且參數為網路錯誤 |
-
----
-
-## 6. 📋 品質檢查清單 (Quality Checklist)
+## 5. 📋 品質檢查清單 (Quality Checklist)
 
 ### ⭐ 基礎框架級 (Foundation Level)
 - [ ] **1.1 📂 分析檔案資訊**：被分析的前端 Service 檔案路徑已填寫。
@@ -219,11 +182,10 @@ async function getUserProfile(userId: string): Promise<UserProfile> {
 - [ ] **4.x.3 前端方法實作**：Endpoint 對應的方法實作程式碼片段已貼上。
 
 ### ⭐⭐⭐ 整合分析級 (Integration Analysis Level)
-- [ ] **3.2 錯誤處理策略**：錯誤處理的核心程式碼範例已提供。
+- [ ] **3.2 錯誤處理策略**：錯誤處理的核心程式碼範例已提供（若有統一處理）。
 - [ ] **4.x.1 請求規格**：請求實體的欄位說明表格已詳細填寫。
 - [ ] **4.x.2 回應規格**：回應實體的欄位說明表格已詳細填寫。
 - [ ] **4.x.3 前端方法實作**：Endpoint 方法的詳細邏輯說明已完成。
-- [ ] **5. 測試案例**：主要的成功與失敗測試案例皆已定義。
 
 ### ⭐⭐⭐⭐ 架構品質級 (Architecture Quality Level)
 - [ ] **完整性**：文件內所有 `[待補充]` 標記皆已移除，並替換為基於原始碼的真實分析內容。

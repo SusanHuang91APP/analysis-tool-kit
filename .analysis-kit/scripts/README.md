@@ -13,7 +13,7 @@
 ├── analysis-analyze.sh       # 深度分析更新
 ├── analysis-deps.sh          # 更新依賴關係
 ├── analysis-paths.sh         # 路徑除錯工具
-└── refactor-doc.sh           # 建立重構規格文件
+└── refactor-plan.sh           # 建立重構規格文件
 ```
 
 ## 🔧 核心腳本
@@ -250,7 +250,7 @@ Directory Structure Status:
 
 ---
 
-### 8. refactor-doc.sh
+### 8. refactor-plan.sh
 **性質：** 重構規格文件生成器
 
 **功能：**
@@ -267,10 +267,10 @@ Directory Structure Status:
 **執行範例：**
 ```bash
 # 從單一分析檔案創建重構規格
-./refactor-doc.sh analysis/001-topic/features/002-MediaGallery.md
+./refactor-plan.sh analysis/001-topic/features/002-MediaGallery.md
 
 # 從多個分析檔案創建重構規格
-./refactor-doc.sh \
+./refactor-plan.sh \
   analysis/001-topic/features/002-MediaGallery.md \
   analysis/001-topic/features/005-MediaCarousel.md
 ```

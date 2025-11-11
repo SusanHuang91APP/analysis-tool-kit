@@ -23,15 +23,11 @@
 
 ## 2. 📋 分析指引 (Analysis Guidelines)
 
-**分析目標：**
-分析請求管線元件（Filter/Middleware）。專注：執行時機、處理邏輯、適用範圍、依賴追蹤、效能與安全。
+**目標：** 分析請求管線元件/Filter/Middleware（執行時機、處理邏輯、適用範圍、短路邏輯、攔截處理）
 
-**核心規則：**
-- 章節結構不變：禁止新增或刪除預設章節
-- 來源檔案限定：只分析 1.1 節列出的檔案
-- 依賴註記：未分析的依賴記錄在 1.2 節
-- 程式碼真實性：禁止使用 `...` 省略或編造內容
-- 品質清單不變：僅更新勾選狀態 `[ ]` -> `[x]`
+**規則：**
+- 章節結構不變 | 來源限定 1.1 節 | 依賴記錄於 1.2 節
+- 程式碼真實性：禁止 `...` 省略或編造 | 品質清單：僅更新勾選狀態
 
 ---
 
@@ -208,119 +204,7 @@ context.HttpContext.Response.Headers.Add("HeaderName", "Value");
 
 ---
 
-## 6. 使用範例 (Usage Examples)
-
-### 6.1 基本使用
-
-```csharp
-// 套用在 Controller
-[PipelineName(Order = 1)]
-public class MyController : Controller
-{
-    // ...
-}
-```
-
----
-
-### 6.2 套用在 Action
-
-```csharp
-// 套用在特定 Action
-[PipelineName]
-public ActionResult MyAction()
-{
-    // ...
-}
-```
-
----
-
-### 6.3 組合使用
-
-```csharp
-// 多個 Pipeline 組合
-[Pipeline1(Order = 1)]
-[Pipeline2(Order = 2)]
-[Pipeline3(Order = 3)]
-public class MyController : Controller
-{
-    // ...
-}
-```
-
----
-
-## 7. 架構與品質分析 (Architecture & Quality Analysis)
-
-### 7.1 效能影響評估
-
-**效能影響：**
-- **執行時間**：[待補充：平均執行時間]
-- **資源消耗**：[待補充：CPU/記憶體使用]
-
-**效能檢查清單：**
-- [ ] 避免重複計算
-- [ ] 快取常用資料
-- [ ] 非同步處理（如適用）
-- [ ] 避免阻塞操作
-
----
-
-### 7.2 安全性檢查
-
-**安全責任：**
-[待補充：此 Pipeline 在安全性方面的責任]
-
-**安全檢查清單：**
-- [ ] 輸入驗證
-- [ ] 授權檢查
-- [ ] SQL 注入防護
-- [ ] XSS 防護
-- [ ] CSRF 防護
-
-**安全風險：**
-- [待補充：已識別的安全風險]
-
----
-
-### 7.3 錯誤處理
-
-**錯誤處理策略：**
-```csharp
-try
-{
-    // Pipeline 邏輯
-}
-catch (Exception ex)
-{
-    // 錯誤處理
-    logger.Error(ex);
-    context.Result = new JsonResult(new { error = "..." });
-}
-```
-
-**錯誤類型：**
-- `ExceptionType1` - [待補充：處理方式]
-- `ExceptionType2` - [待補充：處理方式]
-
----
-
-### 7.4 日誌記錄
-
-**日誌策略：**
-- **記錄時機**：[待補充：何時記錄日誌]
-- **日誌等級**：Debug / Info / Warning / Error
-- **記錄內容**：[待補充：記錄哪些資訊]
-
-**日誌範例：**
-```csharp
-logger.Info($"Pipeline executed: {pipelineName}");
-```
-
----
-
-## 8. 📋 品質檢查清單 (Quality Checklist)
+## 6. 📋 品質檢查清單 (Quality Checklist)
 
 ### ⭐ 基礎框架級 (Foundation Level)
 - [ ] **1.1 📂 分析檔案資訊**：分析的檔案路徑已填寫。
@@ -336,10 +220,8 @@ logger.Info($"Pipeline executed: {pipelineName}");
 
 ### ⭐⭐⭐ 整合分析級 (Integration Analysis Level)
 - [ ] **1.2 📦 依賴關係**：依賴關係表已完整填寫。
-- [ ] **6. 使用範例**：在 Controller、Action 等不同層級的使用範例已提供。
-- [ ] **7.1 效能影響評估**：效能檢查清單已完成評估。
-- [ ] **7.2 安全性檢查**：安全責任與安全性檢查清單已完成評估。
-- [ ] **7.3 錯誤處理**：錯誤處理策略與程式碼範例已提供。
+- [ ] **5.2 回應修改**：回應修改的邏輯與程式碼已提供（若適用）。
+- [ ] **5.3 標頭處理**：標頭讀取與設定的實作已說明（若適用）。
 
 ### ⭐⭐⭐⭐⭐ 功能實作完整分析 (Full Implementation Analysis)
 - [ ] **完整性**：文件內所有 `[待補充]` 標記皆已移除，並替換為基於原始碼的真實分析內容。
